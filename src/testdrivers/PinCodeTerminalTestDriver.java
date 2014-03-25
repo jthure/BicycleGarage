@@ -1,6 +1,5 @@
 package testdrivers;
 
-import garage.BicycleGarageManager;
 import interfaces.*;
 
 import javax.swing.*;

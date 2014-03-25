@@ -1,5 +1,4 @@
 package interfaces;
-import garage.*;
 
 public interface BarcodeReader {
 	

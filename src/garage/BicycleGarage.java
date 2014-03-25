@@ -4,7 +4,7 @@ import interfaces.*;
 
 public class BicycleGarage {
     public BicycleGarage() {
-        BicycleGarageManager manager = new BicycleGarageManager();
+        BicycleGarageManager manager = new TestBicycleGarageManager();
         ElectronicLock entryLock = new ElectronicLockTestDriver("Entry lock");
         ElectronicLock exitLock = new ElectronicLockTestDriver("Exit lock");
         BarcodePrinter printer = new BarcodePrinterTestDriver();
