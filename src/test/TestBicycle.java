@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import garage.*;
 
@@ -21,8 +22,20 @@ public class TestBicycle {
 	}
 
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void testValidID() {
+		assertEquals("12345", b.getId());
+		assertTrue(b.setID("23456"));
+		assertEquals("23456", b.getId());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testCreationInvalidID() {
+		b = new Bicycle("1234");
+	}
+
+	public void testSetInvalidID() {
+		assertFalse(b.setID("1234"));
+		assertEquals("12345", b.getId());
 	}
 
 }

@@ -9,11 +9,12 @@ public class User {
 
 	private String name;
 	private String pin;
-	
+
 	private static final int PIN_LENGTH = 6;
-	
-	public User(String name, String pin){
-		if(pin.length()!=PIN_LENGTH){
+	private static final int MAX_BICYCLES = 2;
+
+	public User(String name, String pin) {
+		if (pin.length() != PIN_LENGTH) {
 			throw new IllegalArgumentException("Pin code is of wrong length");
 		}
 		this.name = name;
@@ -33,8 +34,26 @@ public class User {
 		return pin;
 	}
 
-	public void setPin(String pin) {
-		this.pin = pin;
+	public boolean setPin(String pin) {
+		if (pin.length() == PIN_LENGTH) {
+			this.pin = pin;
+			return true;
+		} else {
+			return false;
+		}
+
 	}
-	
+
+	public boolean addBicyle(Bicycle b) {
+		if (!bicycleListFull()) {
+			return bicycleList.add(b);
+		} else {
+			return false;
+		}
+	}
+
+	public boolean bicycleListFull() {
+		return bicycleList.size() >= MAX_BICYCLES;
+	}
+
 }
