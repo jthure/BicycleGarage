@@ -46,6 +46,7 @@ public class User {
 
 	public boolean addBicyle(Bicycle b) {
 		if (!bicycleListFull()) {
+			b.setOwner(this);
 			return bicycleList.add(b);
 		} else {
 			return false;

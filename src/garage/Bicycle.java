@@ -13,7 +13,7 @@ public class Bicycle {
 	 *            : Barcode associated with the bicycle.
 	 */
 	public Bicycle(String id) {
-		if(id.length()!=ID_LENGTH){
+		if (id.length() != ID_LENGTH) {
 			throw new IllegalArgumentException("Wrong length of bicycle ID");
 		}
 		this.id = id;
@@ -39,7 +39,7 @@ public class Bicycle {
 		if (id.length() == ID_LENGTH) {
 			this.id = id;
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
@@ -77,13 +77,21 @@ public class Bicycle {
 	}
 
 	/**
-	 * Sets the owner to this bike to owner.
+	 * Sets the owner to this bike to owner and adds this bike to the owners
+	 * bicyclelist, if the owner has room for more bicycles.
 	 * 
 	 * @param owner
 	 *            to be set.
+	 * 
+	 * @return true if the owner had room for this bicycle, false otherwise.
 	 */
-	public void setOwner(User owner) {
-		this.owner = owner;
+	public boolean setOwner(User owner) {
+		if (owner.addBicyle(this)) {
+			this.owner = owner;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }
