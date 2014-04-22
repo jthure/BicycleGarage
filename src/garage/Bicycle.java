@@ -1,7 +1,7 @@
 package garage;
 
 public class Bicycle {
-	private static final int ID_LENGTH = 5;
+	public static final int ID_LENGTH = 5;
 	private String id;
 	private User owner;
 	private boolean inGarage;
