@@ -6,11 +6,15 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.util.LinkedList;
 
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import garage.*;
@@ -21,9 +25,10 @@ public class GUI {
 	private Dimension windowSize = new Dimension(400, 400);
 
 	private JTextField nameField;
-	private JTextField bicycleField;
 	private DefaultListModel<User> userListModel;
-	private DefaultListModel<String> bicycleListModel;
+	private UserList userList;
+	private DefaultListModel<Bicycle> bicycleListModel;
+	private BicycleList bicycleList;
 	private JTextField tab2UserSearchField;
 
 	public GUI(Database db) {
@@ -31,7 +36,9 @@ public class GUI {
 
 		JFrame frame = new JFrame("Bicycle Garage 2000");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		// frame.setLayout(new GridLayout(0, 1));
+		JMenuBar menuBar = new JMenuBar();
+		menuBar.add(new ExitMenuItem());
+		frame.setJMenuBar(menuBar);
 
 		JTabbedPane tabbedPane = new JTabbedPane();
 		frame.add(tabbedPane);
@@ -46,41 +53,46 @@ public class GUI {
 		addUserWrapper.add(addUserButton);
 		tab1Wrapper.add(addUserWrapper);
 
-		JPanel addBicycleWrapper = new JPanel();
-		bicycleField = new JTextField(10);
-		AddBicycleButton addBicycleButton = new AddBicycleButton(this);
-		addBicycleWrapper.add(bicycleField);
-		addBicycleWrapper.add(addBicycleButton);
-		tab1Wrapper.add(addBicycleWrapper);
+		// JPanel addBicycleWrapper = new JPanel();
+		// bicycleField = new JTextField(10);
+		// AddBicycleButton addBicycleButton = new AddBicycleButton(this);
+		// addBicycleWrapper.add(bicycleField);
+		// addBicycleWrapper.add(addBicycleButton);
+		// tab1Wrapper.add(addBicycleWrapper);
 
-		// Tab2:
+		// Tab2: Search
 		JPanel tab2Wrapper = new JPanel();
-
-		JPanel userWrapper = new JPanel(new BorderLayout());
+		// Create userpart components
+		JPanel userWrapper = new JPanel();
+		userWrapper.setLayout(new BoxLayout(userWrapper, BoxLayout.Y_AXIS));
+		;
 		JPanel userSearchWrapper = new JPanel();
-//		JTextField tab2UserSearchTitle = new JTextField("Search Users: ");
-//		tab2UserSearchTitle.setEditable(false);
 		SearchUserButton tab2UserSearchButton = new SearchUserButton(this);
 		tab2UserSearchField = new JTextField(10);
 		userListModel = new DefaultListModel<>();
-		UserList userList = new UserList(this, userListModel);
+		userList = new UserList(this, userListModel);
 		JScrollPane tab2UserScrollPane = new JScrollPane(userList);
-//		userSearchWrapper.add(tab2UserSearchTitle);
+		// Add userpart components
 		userSearchWrapper.add(tab2UserSearchField);
 		userSearchWrapper.add(tab2UserSearchButton);
-		userWrapper.add(userSearchWrapper, BorderLayout.NORTH);
-		userWrapper.add(tab2UserScrollPane, BorderLayout.SOUTH);
-
+		userWrapper.add(userSearchWrapper);
+		userWrapper.add(tab2UserScrollPane);
+		// Create bicyclepart components
 		JPanel bicycleWrapper = new JPanel();
-		JTextField tab2BicycleTitle = new JTextField("Users:");
-		bicycleListModel = new DefaultListModel<String>();
-		BicycleList bicycleList = new BicycleList(this, bicycleListModel);
+		bicycleWrapper
+				.setLayout(new BoxLayout(bicycleWrapper, BoxLayout.Y_AXIS));
+		JTextArea tab2BicycleTitle = new JTextArea("Bicycles", 1, 10);
+		bicycleListModel = new DefaultListModel<>();
+		bicycleList = new BicycleList(this, bicycleListModel);
 		JScrollPane tab2BicycleScrollPane = new JScrollPane(bicycleList);
+		AddBicycleButton tab2AddBicycleButton = new AddBicycleButton(this);
+		// Add bicyclepart components
 		bicycleWrapper.add(tab2BicycleTitle);
 		bicycleWrapper.add(tab2BicycleScrollPane);
-
+		bicycleWrapper.add(tab2AddBicycleButton);
+		// Add tab components
 		tab2Wrapper.add(userWrapper);
-
+		tab2Wrapper.add(bicycleWrapper);
 		// Add tabs
 		tabbedPane.addTab("Home", tab1Wrapper);
 		tabbedPane.addTab("Search", tab2Wrapper);
@@ -102,17 +114,14 @@ public class GUI {
 	}
 
 	public void addBicycle() {
-		String userPin = bicycleField.getText();
-		if (userPin != null) {
-			User user = db.getUserWithPin(userPin);
-			if (user != null) {
-				Bicycle bicycleAdded = db.addBicycle(user);
-				if (bicycleAdded != null) {
-					System.out.println(bicycleAdded.getId());
-				}
+		User selectedUser = (User) userList.getSelectedValue();
+		if (selectedUser != null) {
+			Bicycle bicycleAdded = db.addBicycle(selectedUser);
+			if (bicycleAdded != null) {
+				System.out.println(bicycleAdded.getId());
+
 			}
 		}
-		nameField.setText(null);
 	}
 
 	public void searchUser() {
@@ -120,10 +129,17 @@ public class GUI {
 				.getUsersWithNameRegex(tab2UserSearchField.getText());
 		tab2UserSearchField.setText(null);
 		userListModel.clear();
-		for(User u : matchedUsers){
+		for (User u : matchedUsers) {
 			userListModel.addElement(u);
 		}
 
+	}
+
+	public void listBicycles(User user) {
+		bicycleListModel.clear();
+		for (Bicycle b : user.getBicycles()) {
+			bicycleListModel.addElement(b);
+		}
 	}
 
 }

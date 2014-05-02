@@ -1,10 +1,16 @@
 package garage;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-public class User {
+public class User implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4252256277959600771L;
 
 	private List<Bicycle> bicycleList;
 
@@ -74,7 +80,7 @@ public class User {
 	}
 
 	public String toString() {
-		return name + "\t" + pin;
+		return name + ": " + pin;
 	}
 
 }

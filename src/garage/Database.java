@@ -125,6 +125,18 @@ public class Database {
 		}
 	}
 
+	public void saveDatabase() {
+		saveBarcodes();
+		saveBicycles();
+		saveUsers();
+	}
+
+	public void loadDatabase() {
+		readBarcodes();
+		readBicycles();
+		readUsers();
+	}
+
 	private <T extends Serializable> void writeToFile(T object, String fileName) {
 		try {
 			FileOutputStream fout = new FileOutputStream(new File("db/"
@@ -144,7 +156,7 @@ public class Database {
 			InputStream file = new FileInputStream("db/" + fileName);
 			InputStream buffer = new BufferedInputStream(file);
 			input = new ObjectInputStream(buffer);
-			file.close();
+			// file.close();
 		} catch (Exception e) {
 			System.out.println("Error while deserializing");
 			e.printStackTrace();
@@ -170,41 +182,42 @@ public class Database {
 			if (user.addBicyle(bicycle)) {
 				bicycles.put(bicycle.getId(), bicycle);
 				return bicycle;
-			}else{
+			} else {
 				return null;
 			}
-		}
-		else{
+		} else {
 			return null;
 		}
 	}
-	public User getUserWithPin(String pin){
+
+	public User getUserWithPin(String pin) {
 		return users.get(pin);
 	}
-	public LinkedList<User> getUsersWithNameRegex(String name){
+
+	public LinkedList<User> getUsersWithNameRegex(String name) {
 		StringBuilder sb = new StringBuilder();
 		LinkedList<User> matchedUsers = new LinkedList<>();
-		Set<Entry<String,User>> set = users.entrySet();
-		for (Entry<String,User> e:set){
+		Set<Entry<String, User>> set = users.entrySet();
+		for (Entry<String, User> e : set) {
 			User user = e.getValue();
-			String regexName = "(?i)"+name+".*";
-			if (user.getName().matches(regexName)){
+			String regexName = "(?i)" + name + ".*";
+			if (user.getName().matches(regexName)) {
 				matchedUsers.add(user);
 			}
 		}
 		return matchedUsers;
 	}
-	
-	public User removeUser(String pin){
+
+	public User removeUser(String pin) {
 		User user = users.remove(pin);
 		List<Bicycle> userBicycles = user.getBicycles();
-		for (Bicycle b : userBicycles){
+		for (Bicycle b : userBicycles) {
 			bicycles.remove(b.getId());
 		}
 		return user;
 	}
-	
-	public Bicycle getBicycleWithID(String bicycleID){
+
+	public Bicycle getBicycleWithID(String bicycleID) {
 		return bicycles.get(bicycleID);
 	}
 

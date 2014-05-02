@@ -1,6 +1,12 @@
 package garage;
 
-public class Bicycle {
+import java.io.Serializable;
+
+public class Bicycle implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4096291429034376176L;
 	public static final int ID_LENGTH = 5;
 	private String id;
 	private User owner;
@@ -87,6 +93,10 @@ public class Bicycle {
 	 */
 	public void setOwner(User owner) {
 		this.owner = owner;
+	}
+	
+	public String toString(){
+		return id;
 	}
 
 }

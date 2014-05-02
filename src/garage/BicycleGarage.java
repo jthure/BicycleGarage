@@ -6,6 +6,7 @@ import interfaces.*;
 public class BicycleGarage {
     public BicycleGarage() {
     	Database db = new Database();
+    	db.loadDatabase();
 //    	_Test.test(db);
         BicycleGarageManager manager = new TestBicycleGarageManager(db);
         ElectronicLock entryLock = new ElectronicLockTestDriver("Entry lock");
