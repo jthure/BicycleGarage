@@ -1,7 +1,12 @@
 package test;
 
 import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+
 import garage.Database;
+import garage.User;
 
 import org.junit.After;
 import org.junit.Before;
@@ -43,6 +48,18 @@ public class TestDatabase {
 			System.out.println(barcode);
 			barcode = db.getNextBarcode();
 		}
+	}
+	
+	@Test
+	public void testRegexSearch(){
+		db.addUser("Jonas larsson");
+		db.addUser("JoNas Thuresson");
+		LinkedList<User> matched = db.getUsersWithNameRegex("jOnas");
+		for (User u : matched){
+			System.out.println(u.getName());
+		}
+		assertEquals(2, matched.size());
+		
 	}
 
 }

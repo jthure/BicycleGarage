@@ -85,13 +85,8 @@ public class Bicycle {
 	 * 
 	 * @return true if the owner had room for this bicycle, false otherwise.
 	 */
-	public boolean setOwner(User owner) {
-		if (owner.addBicyle(this)) {
-			this.owner = owner;
-			return true;
-		} else {
-			return false;
-		}
+	public void setOwner(User owner) {
+		this.owner = owner;
 	}
 
 }

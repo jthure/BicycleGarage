@@ -1,5 +1,6 @@
 package garage;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,8 +10,11 @@ public class User {
 
 	private String name;
 	private String pin;
+	private String pNbr;
+	private String address;
+	private Date lastCheckIn;
 
-	private static final int PIN_LENGTH = 6;
+	static final int PIN_LENGTH = 6;
 	private static final int MAX_BICYCLES = 2;
 
 	public User(String name, String pin) {
@@ -20,6 +24,7 @@ public class User {
 		this.name = name;
 		this.pin = pin;
 		bicycleList = new LinkedList<>();
+		lastCheckIn = new Date(0);
 	}
 
 	public String getName() {
@@ -55,6 +60,21 @@ public class User {
 
 	public boolean bicycleListFull() {
 		return bicycleList.size() >= MAX_BICYCLES;
+	}
+
+	public void checkIn() {
+		lastCheckIn.setTime(new Date().getTime());
+	}
+
+	public boolean isCheckedIn() {
+		return new Date().getTime() - lastCheckIn.getTime() <= Database.CHECK_IN_TIMER;
+	}
+	public List<Bicycle> getBicycles(){
+		return bicycleList;
+	}
+
+	public String toString() {
+		return name + "\t" + pin;
 	}
 
 }

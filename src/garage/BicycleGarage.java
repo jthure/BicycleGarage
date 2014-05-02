@@ -1,10 +1,13 @@
 package garage;
 import testdrivers.*;
+import gui.GUI;
 import interfaces.*;
 
 public class BicycleGarage {
     public BicycleGarage() {
-        BicycleGarageManager manager = new TestBicycleGarageManager();
+    	Database db = new Database();
+//    	_Test.test(db);
+        BicycleGarageManager manager = new TestBicycleGarageManager(db);
         ElectronicLock entryLock = new ElectronicLockTestDriver("Entry lock");
         ElectronicLock exitLock = new ElectronicLockTestDriver("Exit lock");
         BarcodePrinter printer = new BarcodePrinterTestDriver();
@@ -15,6 +18,8 @@ public class BicycleGarage {
         BarcodeReader readerExit = new BarcodeReaderExitTestDriver();
         readerEntry.register(manager);
         readerExit.register(manager);
+        
+        new GUI(db);
     }
     public static void main(String[] args) {
         new BicycleGarage();
