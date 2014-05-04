@@ -4,8 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JTextField;
 
+@SuppressWarnings("serial")
 public class AddBicycleButton extends JButton implements ActionListener {
 	GUI gui;
 	

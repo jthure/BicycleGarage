@@ -63,6 +63,9 @@ public class User implements Serializable{
 			return false;
 		}
 	}
+	public boolean removeBicycle(Bicycle b){
+		return bicycleList.remove(b);
+	}
 
 	public boolean bicycleListFull() {
 		return bicycleList.size() >= MAX_BICYCLES;

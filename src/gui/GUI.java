@@ -1,16 +1,13 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.util.LinkedList;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -37,7 +34,9 @@ public class GUI {
 		JFrame frame = new JFrame("Bicycle Garage 2000");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JMenuBar menuBar = new JMenuBar();
-		menuBar.add(new ExitMenuItem());
+		JMenu menu = new JMenu("File");
+		menuBar.add(menu);
+		menu.add(new ExitMenuItem(db));
 		frame.setJMenuBar(menuBar);
 
 		JTabbedPane tabbedPane = new JTabbedPane();
@@ -118,9 +117,14 @@ public class GUI {
 		if (selectedUser != null) {
 			Bicycle bicycleAdded = db.addBicycle(selectedUser);
 			if (bicycleAdded != null) {
-				System.out.println(bicycleAdded.getId());
-
+				listBicycles(selectedUser);
 			}
+		}
+	}
+	public void removeBicycle(){
+		User selectedUser = (User) userList.getSelectedValue();
+		if (selectedUser != null) {
+			db.re
 		}
 	}
 

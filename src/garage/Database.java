@@ -195,7 +195,6 @@ public class Database {
 	}
 
 	public LinkedList<User> getUsersWithNameRegex(String name) {
-		StringBuilder sb = new StringBuilder();
 		LinkedList<User> matchedUsers = new LinkedList<>();
 		Set<Entry<String, User>> set = users.entrySet();
 		for (Entry<String, User> e : set) {
@@ -215,6 +214,12 @@ public class Database {
 			bicycles.remove(b.getId());
 		}
 		return user;
+	}
+	
+	public Bicycle removeBicycle(Bicycle b){
+		
+		return bicycles.remove(b.getId());
+		
 	}
 
 	public Bicycle getBicycleWithID(String bicycleID) {

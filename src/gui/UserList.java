@@ -7,10 +7,11 @@ import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-public class UserList extends JList implements ListSelectionListener {
+@SuppressWarnings("serial")
+public class UserList extends JList<User> implements ListSelectionListener {
 	GUI gui;
 	
-	public UserList(GUI gui, DefaultListModel list){
+	public UserList(GUI gui, DefaultListModel<User> list){
 		super(list);
 		this.gui = gui;
 		addListSelectionListener(this);
