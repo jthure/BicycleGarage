@@ -3,7 +3,9 @@ package garage;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
@@ -31,9 +33,13 @@ public class Database {
 	public Database() {
 		users = new HashMap<>();
 		bicycles = new HashMap<>();
-		barcodes = new LinkedList<>();
-		pincodes = new LinkedList<>();
+		// barcodes = new LinkedList<>();
+		// pincodes = new LinkedList<>();
 
+	}
+
+	private void generateBarcodes() {
+		barcodes = new LinkedList<>();
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < MAX_BARCODES; i++) {
 			sb.setLength(0);
@@ -44,6 +50,13 @@ public class Database {
 			barcodes.add(sb.toString());
 
 		}
+		Collections.shuffle(barcodes);
+	}
+
+	private void generatePincodes() {
+		pincodes = new LinkedList<>();
+		StringBuilder sb = new StringBuilder();
+
 		for (int i = 0; i < MAX_USERS; i++) {
 			sb.setLength(0);
 			sb.append(i);
@@ -51,11 +64,8 @@ public class Database {
 				sb.insert(0, "0");
 			}
 			pincodes.add(sb.toString());
-
 		}
-		Collections.shuffle(barcodes);
 		Collections.shuffle(pincodes);
-
 	}
 
 	public String getNextBarcode() {
@@ -83,58 +93,62 @@ public class Database {
 	public void saveBarcodes() {
 		writeToFile(barcodes, "barcodes.db");
 	}
+	public void savePincodes() {
+		writeToFile(pincodes, "pincodes.db");
+	}
 
 	public void saveUsers() {
 		writeToFile(users, "users.db");
 	}
 
-	public void saveBicycles() {
-		writeToFile(bicycles, "bicycles.db");
+
+	public void readPincodes() {
+		LinkedList<String> input = (LinkedList<String>) readFromFile("pincodes.db");
+		if (input != null) {
+			pincodes = input;
+		}else{
+			generatePincodes();
+		}
 	}
 
 	public void readBarcodes() {
-		try {
-			LinkedList<String> input = (LinkedList<String>) readFromFile(
-					"barcodes.db").readObject();
+		LinkedList<String> input = (LinkedList<String>) readFromFile("barcodes.db");
+		if (input != null) {
 			barcodes = input;
-		} catch (Exception e) {
-			System.out.println("Error while deserializing barcodes");
-			e.printStackTrace();
+		}else{
+			generateBarcodes();
 		}
 	}
 
 	public void readUsers() {
-		try {
-			HashMap<String, User> input = (HashMap<String, User>) readFromFile(
-					"users.db").readObject();
+		HashMap<String, User> input = (HashMap<String, User>) readFromFile("users.db");
+		if (input != null) {
 			users = input;
-		} catch (Exception e) {
-			System.out.println("Error while deserializing barcodes");
-			e.printStackTrace();
 		}
 	}
 
-	public void readBicycles() {
-		try {
-			HashMap<String, Bicycle> input = (HashMap<String, Bicycle>) readFromFile(
-					"bicycles.db").readObject();
-			bicycles = input;
-		} catch (Exception e) {
-			System.out.println("Error while deserializing barcodes");
-			e.printStackTrace();
-		}
-	}
 
 	public void saveDatabase() {
 		saveBarcodes();
-		saveBicycles();
+		savePincodes();
 		saveUsers();
 	}
 
 	public void loadDatabase() {
 		readBarcodes();
-		readBicycles();
+		readPincodes();
 		readUsers();
+		buildBicycleDatabase();
+
+	}
+
+	public void buildBicycleDatabase() {
+		Set<Entry<String, User>> set = users.entrySet();
+		for (Entry<String, User> e : set) {
+			for (Bicycle b : e.getValue().getBicycles()) {
+				bicycles.put(b.getId(), b);
+			}
+		}
 	}
 
 	private <T extends Serializable> void writeToFile(T object, String fileName) {
@@ -150,18 +164,24 @@ public class Database {
 		}
 	}
 
-	private ObjectInput readFromFile(String fileName) {
-		ObjectInput input = null;
+	private Object readFromFile(String fileName) {
+		Object object = null;
 		try {
 			InputStream file = new FileInputStream("db/" + fileName);
 			InputStream buffer = new BufferedInputStream(file);
-			input = new ObjectInputStream(buffer);
+			ObjectInput input = new ObjectInputStream(buffer);
+			object = input.readObject();
 			// file.close();
-		} catch (Exception e) {
-			System.out.println("Error while deserializing");
+		} catch (FileNotFoundException e) {
+			System.out.println("Could not find file: db/" + fileName);
+		} catch (IOException e) {
+			System.out.println("Error while deserializing: I/O Exception");
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			System.out.println("Error while deserializing: Invalid type read");
 			e.printStackTrace();
 		}
-		return input;
+		return object;
 	}
 
 	public User addUser(String name) {
@@ -183,6 +203,7 @@ public class Database {
 				bicycles.put(bicycle.getId(), bicycle);
 				return bicycle;
 			} else {
+				barcodes.add(barcode);
 				return null;
 			}
 		} else {
@@ -215,11 +236,12 @@ public class Database {
 		}
 		return user;
 	}
-	
-	public Bicycle removeBicycle(Bicycle b){
-		
+
+	public Bicycle removeBicycle(Bicycle b) {
+		barcodes.add(b.getId());
+		b.getOwner().removeBicycle(b);
 		return bicycles.remove(b.getId());
-		
+
 	}
 
 	public Bicycle getBicycleWithID(String bicycleID) {

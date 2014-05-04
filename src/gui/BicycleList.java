@@ -19,7 +19,7 @@ public class BicycleList extends JList<Bicycle> implements ListSelectionListener
 
 	@Override
 	public void valueChanged(ListSelectionEvent arg0) {
-		System.out.println("Bicycle Selected");
+		gui.onBicycleSelect();
 
 	}
 

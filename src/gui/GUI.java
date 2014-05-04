@@ -13,13 +13,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.text.JTextComponent;
 
 import garage.*;
 
 public class GUI {
 	private Database db;
 
-	private Dimension windowSize = new Dimension(400, 400);
+	private Dimension windowSize = new Dimension(600, 400);
 
 	private JTextField nameField;
 	private DefaultListModel<User> userListModel;
@@ -27,6 +28,7 @@ public class GUI {
 	private DefaultListModel<Bicycle> bicycleListModel;
 	private BicycleList bicycleList;
 	private JTextField tab2UserSearchField;
+	private JTextComponent tab2BicycleStatusField;
 
 	public GUI(Database db) {
 		this.db = db;
@@ -85,10 +87,15 @@ public class GUI {
 		bicycleList = new BicycleList(this, bicycleListModel);
 		JScrollPane tab2BicycleScrollPane = new JScrollPane(bicycleList);
 		AddBicycleButton tab2AddBicycleButton = new AddBicycleButton(this);
+		RemoveBicycleButton tab2RemoveBicycleButton = new RemoveBicycleButton(
+				this);
+		tab2BicycleStatusField = new JTextArea();
 		// Add bicyclepart components
 		bicycleWrapper.add(tab2BicycleTitle);
 		bicycleWrapper.add(tab2BicycleScrollPane);
 		bicycleWrapper.add(tab2AddBicycleButton);
+		bicycleWrapper.add(tab2RemoveBicycleButton);
+		bicycleWrapper.add(tab2BicycleStatusField);
 		// Add tab components
 		tab2Wrapper.add(userWrapper);
 		tab2Wrapper.add(bicycleWrapper);
@@ -121,10 +128,15 @@ public class GUI {
 			}
 		}
 	}
-	public void removeBicycle(){
+
+	public void removeBicycle() {
 		User selectedUser = (User) userList.getSelectedValue();
 		if (selectedUser != null) {
-			db.re
+			Bicycle selectedBicycle = (Bicycle) bicycleList.getSelectedValue();
+			if (selectedBicycle != null) {
+				db.removeBicycle(selectedBicycle);
+				listBicycles(selectedUser);
+			}
 		}
 	}
 
@@ -143,6 +155,14 @@ public class GUI {
 		bicycleListModel.clear();
 		for (Bicycle b : user.getBicycles()) {
 			bicycleListModel.addElement(b);
+		}
+	}
+
+	public void onBicycleSelect() {
+		Bicycle b = bicycleList.getSelectedValue();
+		if (b != null) {
+			String s = String.valueOf(b.isInGarage());
+			tab2BicycleStatusField.setText(s);
 		}
 	}
 

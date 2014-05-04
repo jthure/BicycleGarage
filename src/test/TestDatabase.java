@@ -63,7 +63,7 @@ public class TestDatabase {
 		db.addBicycle(u);
 		
 		db.saveBarcodes();
-		db.saveBicycles();
+//		db.saveBicycles();
 		db.saveUsers();
 	}
 	

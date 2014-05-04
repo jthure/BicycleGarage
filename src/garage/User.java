@@ -21,7 +21,7 @@ public class User implements Serializable{
 	private Date lastCheckIn;
 
 	static final int PIN_LENGTH = 6;
-	private static final int MAX_BICYCLES = 2;
+	private static final int MAX_BICYCLES = 5;
 
 	public User(String name, String pin) {
 		if (pin.length() != PIN_LENGTH) {
