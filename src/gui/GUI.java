@@ -241,7 +241,6 @@ public class GUI {
 	public void addBicycle() {
 		Member selectedUser = (Member) userList.getSelectedValue();
 		if (selectedUser != null) {
-			;
 			if (db.addBicycle(selectedUser)) {
 				listBicycles(selectedUser);
 			}
@@ -260,13 +259,13 @@ public class GUI {
 	}
 
 	public void searchUser() {
-		// LinkedList<Member> matchedUsers =
-		// db.getUsersWithNameRegex(tab2UserSearchField.getText());
-		// tab2UserSearchField.setText(null);
-		// userListModel.clear();
-		// for (Member u : matchedUsers) {
-		// userListModel.addElement(u);
-		// }
+		LinkedList<Member> matchedUsers = db
+				.getUsersWithNameRegex(tab2UserSearchField.getText());
+		tab2UserSearchField.setText(null);
+		userListModel.clear();
+		for (Member u : matchedUsers) {
+			userListModel.addElement(u);
+		}
 	}
 
 	/**
@@ -298,7 +297,7 @@ public class GUI {
 			tab2LnameField.setText(m.getInfo()[1]);
 			tab2TelField.setText(m.getInfo()[2]);
 			tab2PIDField.setText(m.getPIDNbr());
-			tab2PIDField.setText(m.getPIN());
+			tab2PINField.setText(m.getPIN());
 			tab2SuspendedField.setText(String.valueOf(m.isSuspended()));
 		}
 	}

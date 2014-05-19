@@ -31,4 +31,7 @@ public class Bicycle {
 	public boolean isParked() {
 		return parked;
 	}
+	public String toString(){
+		return barCode;
+	}
 }

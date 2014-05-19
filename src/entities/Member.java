@@ -93,4 +93,7 @@ public class Member {
 		}
 		return false;
 	}
+	public String toString(){
+		return firstName + " " + lastName;
+	}
 }

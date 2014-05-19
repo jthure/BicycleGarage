@@ -24,6 +24,7 @@ public class UserList extends JList<Member> implements ListSelectionListener {
 		if(selectedValue instanceof Member){
 			Member selectedMember = (Member) selectedValue;
 			gui.listBicycles(selectedMember);
+			gui.onMemberSelect();
 		}
 //		else{
 //			throw new IllegalArgumentException("Selected value in list is not of type \"User\"");
