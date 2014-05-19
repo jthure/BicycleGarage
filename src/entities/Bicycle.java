@@ -24,6 +24,9 @@ public class Bicycle {
 		parked = true;
 		return true;
 	}
+	public void unPark(){
+		parked = false;
+	}
 	
 	public boolean isParked() {
 		return parked;

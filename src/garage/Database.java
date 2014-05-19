@@ -15,8 +15,8 @@ public class Database implements DatabaseInterface{
 	public Database(int maxBikes, int maxMembers) {
 		members = new LimitedHashMap<String, LinkedList<Member>>(maxMembers);
 		bicycles = new LimitedHashMap<String, LinkedList<Bicycle>>(maxBikes);
-		generateCodes(availablePIN, 6);
-		generateCodes(availableBar, 5);
+//		generateCodes(availablePIN, 6);
+//		generateCodes(availableBar, 5);
 	}
 	
 	private void generateCodes(LinkedList<String> list, int digits) {
@@ -29,15 +29,17 @@ public class Database implements DatabaseInterface{
 		Collections.shuffle(list);
 	}
 	
-	public boolean addMember(Member m) {
+	public boolean addMember(String fName, String lName, String PID, String tel) {
 //		if (members.put(m.getPIDNbr(), m) != null) {
 //			PIN_MemberPairs.put(m.getPIN(), m.getPIDNbr());
 //			
 //		}
+		return false;
 	}
 //	
 	public Member getMember(String PIDNbr) {
 //		return members.get(PIDNbr);
+		return null;
 	}
 	
 	public boolean addBicycle(Member m){
@@ -53,6 +55,18 @@ public class Database implements DatabaseInterface{
 	}
 	public void saveDatabase(){
 		
+	}
+
+	@Override
+	public boolean removeMember(String PIDNbr) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean removeBicycle(String barcode) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 	

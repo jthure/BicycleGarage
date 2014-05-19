@@ -1,6 +1,9 @@
 package gui;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.util.LinkedList;
 
 import javax.swing.BoxLayout;
@@ -23,13 +26,18 @@ public class GUI {
 
 	private Dimension windowSize = new Dimension(600, 400);
 
-	private JTextField nameField;
+	private JTextField tab1FnameField;
+	private JTextField tab1LnameField;
+	private JTextField tab1PIDField;
+	private JTextField tab1TelField;
+
+	private JTextField tab2UserSearchField;
+	private JTextComponent tab2BicycleStatusField;
+
 	private DefaultListModel<Member> userListModel;
 	private UserList userList;
 	private DefaultListModel<Bicycle> bicycleListModel;
 	private BicycleList bicycleList;
-	private JTextField tab2UserSearchField;
-	private JTextComponent tab2BicycleStatusField;
 
 	public GUI(Database db) {
 		this.db = db;
@@ -41,6 +49,7 @@ public class GUI {
 		menuBar.add(menu);
 		menu.add(new ExitMenuItem(db));
 		frame.setJMenuBar(menuBar);
+		Color defaultColor = frame.getBackground();
 
 		JTabbedPane tabbedPane = new JTabbedPane();
 		frame.add(tabbedPane);
@@ -48,61 +57,119 @@ public class GUI {
 		// Tab1: Home
 		JPanel tab1Wrapper = new JPanel();
 
-		JPanel addUserWrapper = new JPanel();
-		nameField = new JTextField(10);
+		JPanel addUserWrapper = new JPanel(new GridLayout(0, 2));
+		tab1FnameField = new JTextField(10);
+		tab1LnameField = new JTextField(10);
+		tab1PIDField = new JTextField(10);
+		tab1TelField = new JTextField(10);
 		AddUserButton addUserButton = new AddUserButton(this);
-		addUserWrapper.add(nameField);
+		JTextArea textArea = new JTextArea("First name: ");
+		textArea.setBackground(defaultColor);
+		addUserWrapper.add(textArea);
+		addUserWrapper.add(tab1FnameField);
+		textArea = new JTextArea("Last name: ");
+		textArea.setBackground(defaultColor);
+		addUserWrapper.add(textArea);
+		addUserWrapper.add(tab1LnameField);
+		textArea = new JTextArea("Personal ID: ");
+		textArea.setBackground(defaultColor);
+		addUserWrapper.add(textArea);
+		addUserWrapper.add(tab1PIDField);
+		textArea = new JTextArea("Tel. number: ");
+		textArea.setBackground(defaultColor);
+		addUserWrapper.add(textArea);
+		addUserWrapper.add(tab1TelField);
+
 		addUserWrapper.add(addUserButton);
 		tab1Wrapper.add(addUserWrapper);
 
-		// JPanel addBicycleWrapper = new JPanel();
-		// bicycleField = new JTextField(10);
-		// AddBicycleButton addBicycleButton = new AddBicycleButton(this);
-		// addBicycleWrapper.add(bicycleField);
-		// addBicycleWrapper.add(addBicycleButton);
-		// tab1Wrapper.add(addBicycleWrapper);
+		// Tab2: Manage
+		JPanel tab2Wrapper = new JPanel(new BorderLayout());
 
-		// Tab2: Search
-		JPanel tab2Wrapper = new JPanel();
-		// Create userpart components
-		JPanel userWrapper = new JPanel();
-		userWrapper.setLayout(new BoxLayout(userWrapper, BoxLayout.Y_AXIS));
-		;
+		JPanel topWrapper = new JPanel(new GridLayout(0, 2));
+		textArea = new JTextArea("Users");
+		textArea.setBackground(defaultColor);
+		topWrapper.add(textArea);
+
+		textArea = new JTextArea("Bicycles");
+		textArea.setBackground(defaultColor);
+		topWrapper.add(textArea);
+
+		// Row 2
 		JPanel userSearchWrapper = new JPanel();
 		SearchUserButton tab2UserSearchButton = new SearchUserButton(this);
 		tab2UserSearchField = new JTextField(10);
+		userSearchWrapper.add(tab2UserSearchField);
+		userSearchWrapper.add(tab2UserSearchButton);
+		topWrapper.add(userSearchWrapper);
+
+		topWrapper.add(new JPanel());
+
+		JPanel midWrapper = new JPanel(new GridLayout(0, 2));
 		userListModel = new DefaultListModel<>();
 		userList = new UserList(this, userListModel);
 		JScrollPane tab2UserScrollPane = new JScrollPane(userList);
-		// Add userpart components
-		userSearchWrapper.add(tab2UserSearchField);
-		userSearchWrapper.add(tab2UserSearchButton);
-		userWrapper.add(userSearchWrapper);
-		userWrapper.add(tab2UserScrollPane);
-		// Create bicyclepart components
-		JPanel bicycleWrapper = new JPanel();
-		bicycleWrapper
-				.setLayout(new BoxLayout(bicycleWrapper, BoxLayout.Y_AXIS));
-		JTextArea tab2BicycleTitle = new JTextArea("Bicycles", 1, 10);
+		midWrapper.add(tab2UserScrollPane);
+
 		bicycleListModel = new DefaultListModel<>();
 		bicycleList = new BicycleList(this, bicycleListModel);
 		JScrollPane tab2BicycleScrollPane = new JScrollPane(bicycleList);
+		midWrapper.add(tab2BicycleScrollPane);
+
+		midWrapper.add(new JPanel());
+
+		JPanel bicycleButtonWrapper = new JPanel();
 		AddBicycleButton tab2AddBicycleButton = new AddBicycleButton(this);
 		RemoveBicycleButton tab2RemoveBicycleButton = new RemoveBicycleButton(
 				this);
+		bicycleButtonWrapper.add(tab2RemoveBicycleButton);
+		bicycleButtonWrapper.add(tab2AddBicycleButton);
+		midWrapper.add(bicycleButtonWrapper);
+
+		JPanel botWrapper = new JPanel(new GridLayout(1, 2));
+		JPanel userInfoWrapper = new JPanel(new GridLayout(0, 2));
+		textArea = new JTextArea("First name: ");
+		textArea.setBackground(defaultColor);
+		userInfoWrapper.add(textArea);
+		userInfoWrapper.add(textArea);
+		textArea = new JTextArea("Last name: ");
+		textArea.setBackground(defaultColor);
+		userInfoWrapper.add(textArea);
+		userInfoWrapper.add(textArea);
+		textArea = new JTextArea("Personal ID: ");
+		textArea.setBackground(defaultColor);
+		userInfoWrapper.add(textArea);
+		userInfoWrapper.add(textArea);
+		textArea = new JTextArea("Tel. number: ");
+		textArea.setBackground(defaultColor);
+		userInfoWrapper.add(textArea);
+		userInfoWrapper.add(textArea);
+		textArea = new JTextArea("Suspended: ");
+		textArea.setBackground(defaultColor);
+		userInfoWrapper.add(textArea);
+		userInfoWrapper.add(textArea);
+		botWrapper.add(userInfoWrapper);
+
+		JPanel bicycleInfoWrapper = new JPanel(new GridLayout(0, 2));
+		textArea = new JTextArea("Parked in garage");
+		textArea.setBackground(defaultColor);
+		userInfoWrapper.add(textArea);
+		userInfoWrapper.add(textArea);
+		botWrapper.add(bicycleInfoWrapper);
+
 		tab2BicycleStatusField = new JTextArea();
-		// Add bicyclepart components
-		bicycleWrapper.add(tab2BicycleTitle);
-		bicycleWrapper.add(tab2BicycleScrollPane);
-		bicycleWrapper.add(tab2AddBicycleButton);
-		bicycleWrapper.add(tab2RemoveBicycleButton);
-		bicycleWrapper.add(tab2BicycleStatusField);
-		// Add tab components
-		tab2Wrapper.add(userWrapper);
-		tab2Wrapper.add(bicycleWrapper);
+
+		tab2Wrapper.add(topWrapper, BorderLayout.NORTH);
+		tab2Wrapper.add(midWrapper, BorderLayout.CENTER);
+		tab2Wrapper.add(botWrapper, BorderLayout.SOUTH);
+
+		// Tab 3: Statistics
+		JPanel tab3Wrapper = new JPanel();
+
 		// Add tabs
-		tabbedPane.addTab("Home", tab1Wrapper);
-		tabbedPane.addTab("Search", tab2Wrapper);
+		tabbedPane.addTab("Add User", tab1Wrapper);
+		tabbedPane.addTab("Manage", tab2Wrapper);
+		tabbedPane.addTab("Satistics", tab3Wrapper);
 
 		frame.setPreferredSize(windowSize);
 		frame.pack();
@@ -111,48 +178,52 @@ public class GUI {
 	}
 
 	public void addUser() {
-//		String name = nameField.getText();
-//		if (name != null) {
-//			Member userAdded = db.addUser(name);
-//			System.out.println(userAdded.getName() + ": " + userAdded.getPin());
-//		}
-//		nameField.setText(null);
+
+		if (tab1FnameField.getText() != null) {
+			if (db.addMember(tab1FnameField.getText(), tab1LnameField.getText(), tab1PIDField.getText(),
+					tab1TelField.getText())) {
+				System.out.println("User added");
+			}
+		}
+		tab1FnameField.setText(null);
+		tab1LnameField.setText(null);
+		tab1PIDField.setText(null);
+		tab1TelField.setText(null);
 	}
 
 	public void addBicycle() {
-//		Member selectedUser = (Member) userList.getSelectedValue();
-//		if (selectedUser != null) {
-//			Bicycle bicycleAdded = db.addBicycle(selectedUser);
-//			if (bicycleAdded != null) {
-//				listBicycles(selectedUser);
-//			}
-//		}
+		Member selectedUser = (Member) userList.getSelectedValue();
+		if (selectedUser != null) {
+			;
+			if (db.addBicycle(selectedUser)) {
+				listBicycles(selectedUser);
+			}
+		}
 	}
 
 	public void removeBicycle() {
-//		Member selectedUser = (Member) userList.getSelectedValue();
-//		if (selectedUser != null) {
-//			Bicycle selectedBicycle = (Bicycle) bicycleList.getSelectedValue();
-//			if (selectedBicycle != null) {
-//				db.removeBicycle(selectedBicycle);
-//				listBicycles(selectedUser);
-//			}
-//		}
+		Bicycle selectedBicycle = (Bicycle) bicycleList.getSelectedValue();
+		if (selectedBicycle != null) {
+			db.removeBicycle(selectedBicycle.getBarcode());
+			listBicycles((Member) userList.getSelectedValue());
+		}
+
 	}
 
 	public void searchUser() {
-//		LinkedList<Member> matchedUsers = db.getUsersWithNameRegex(tab2UserSearchField.getText());
-//		tab2UserSearchField.setText(null);
-//		userListModel.clear();
-//		for (Member u : matchedUsers) {
-//			userListModel.addElement(u);
-//		}
+		// LinkedList<Member> matchedUsers =
+		// db.getUsersWithNameRegex(tab2UserSearchField.getText());
+		// tab2UserSearchField.setText(null);
+		// userListModel.clear();
+		// for (Member u : matchedUsers) {
+		// userListModel.addElement(u);
+		// }
 	}
 
 	public void listBicycles(Member member) {
 		bicycleListModel.clear();
-		for (Bicycle b : member.getBicycles()) {
-			bicycleListModel.addElement(b);
+		for (String b : member.getBicycles()) {
+			bicycleListModel.addElement(db.getBicycle(b));
 		}
 	}
 
