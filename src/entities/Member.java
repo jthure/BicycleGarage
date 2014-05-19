@@ -1,37 +1,55 @@
 package entities;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Member {
-	public final static int maxBicycles = 2;
+	public final static int MAX_BICYCLES = 2;
+	public final static long CHECK_IN_TIME = 600000;	// represented in milliseconds
 	
 	private String firstName, lastName, PIDNbr, telNbr, PINCode;
-	private boolean suspended;
 	private Date checkedIn, suspExpDate;
-	private String[] bicycles;
+	private ArrayList<String> bicycles;
 	
 	public Member(String firstName, String lastName, String PIDNbr, String telNbr, String PINCode) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.PIDNbr = PIDNbr;
 		this.telNbr = telNbr;
-		suspended = false;
 		suspExpDate = new Date();
 		this.PINCode = PINCode;
-		bicycles = new String[maxBicycles];
+		bicycles = new ArrayList<String>(MAX_BICYCLES);
 	}
-	public boolean addBicycle(String barcode){
+	
+	public boolean isCheckedIn() {
+		if ((new Date()).getTime() - checkedIn.getTime() < CHECK_IN_TIME) {
+			return true;
+		}
 		return false;
 	}
 	
+	public void checkIn() {
+		checkedIn = new Date();
+	}
+	
+	public boolean addBicycle(String barcode){
+		if (bicycles.size() < 2) {
+			bicycles.add(barcode);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean removeBicycle(String barcode) {
+		return bicycles.remove(barcode);
+	}
 	
 	public void suspend(Date suspendUntil) {
 		suspExpDate = suspendUntil;
-		suspended = true;
 	}
 	
 	public void unsuspend() {
-		suspended = false;
+		suspExpDate = new Date();
 	}
 	
 	public boolean isSuspended() {
@@ -57,13 +75,22 @@ public class Member {
 		return PINCode;
 	}
 	
-	public String changePIN(String PINCode) {
-//		TODO: Insert code for generating PIN code
-		return null;
+	public String setPIN(String PINCode) {
+		this.PINCode = PINCode;
+		return PINCode;
 	}
 	
-	public String[] getBicycles() {
-//		TODO: Code for looking up bicycles
-		return null;
+	public ArrayList<String> getBicycles() {
+		return bicycles;
+	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof Member) {
+			if (PIDNbr.equals(((Member) o).getPIDNbr())) {
+				return true;
+			}
+			return false;
+		}
+		return false;
 	}
 }

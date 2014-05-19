@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class LimitedHashMap<K, V extends LinkedList<?>> extends HashMap<K, V> {
+public class LimitedHashMap<K, V> extends HashMap<K, V> {
 	private int max;
 	
 	public LimitedHashMap(int maxCapacity) {
@@ -27,7 +27,7 @@ public class LimitedHashMap<K, V extends LinkedList<?>> extends HashMap<K, V> {
 	
 	@Override
 	public V put(K key, V value) {
-		if (size() > max && !containsKey(key)) {
+		if (size() >= max && !containsKey(key)) {
 			return null;
 		} else {
 			return super.put(key, value);

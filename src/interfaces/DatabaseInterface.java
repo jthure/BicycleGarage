@@ -4,7 +4,7 @@ import entities.Bicycle;
 import entities.Member;
 
 public interface DatabaseInterface {
-	public boolean addMember(String fName, String lName, String PID, String tel);
+	public boolean addMember(String fName, String lName, String PIDNbr, String telNbr);
 
 	public Member getMember(String PIDNbr);
 	

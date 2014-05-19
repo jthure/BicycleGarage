@@ -4,8 +4,8 @@ public class Bicycle {
 	private String barCode, ownerPIN;
 	private boolean parked;
 	
-	public Bicycle(String ownerPIN) {
-//		TODO: Insert code for generating barcode
+	public Bicycle(String ownerPIN, String barcode) {
+		barCode = barcode;
 		this.ownerPIN = ownerPIN;
 	}
 	
@@ -18,9 +18,9 @@ public class Bicycle {
 	}
 	
 	public boolean park() {
-		if (parked)
+		if (parked) {
 			return false;
-//		TODO: Insert code for checking if garage is full
+		}
 		parked = true;
 		return true;
 	}
