@@ -1,14 +1,15 @@
 package garage;
 
+import interfaces.DatabaseInterface;
+
 import java.util.*;
 
 import entities.Bicycle;
 import entities.Member;
 
-public class Database {
+public class Database implements DatabaseInterface{
 	private LimitedHashMap<String, LinkedList<Member>> members;
 	private LimitedHashMap<String, LinkedList<Bicycle>> bicycles;
-	private HashMap<String, String> PIN_MemberPairs;
 	private LinkedList<String> availablePIN, availableBar;
 	
 	public Database(int maxBikes, int maxMembers) {
@@ -28,14 +29,31 @@ public class Database {
 		Collections.shuffle(list);
 	}
 	
-//	public boolean addMember(Member m) {
+	public boolean addMember(Member m) {
 //		if (members.put(m.getPIDNbr(), m) != null) {
 //			PIN_MemberPairs.put(m.getPIN(), m.getPIDNbr());
 //			
 //		}
-//	}
+	}
 //	
-//	public Member getMember(String PIDNbr) {
+	public Member getMember(String PIDNbr) {
 //		return members.get(PIDNbr);
-//	}
+	}
+	
+	public boolean addBicycle(Member m){
+		return false;
+	}
+	public Bicycle getBicycle(String barcode){
+		return null;
+	}
+	
+	
+	public void loadDatabase(){
+		
+	}
+	public void saveDatabase(){
+		
+	}
+	
+	
 }

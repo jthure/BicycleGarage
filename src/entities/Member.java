@@ -3,20 +3,27 @@ package entities;
 import java.util.Date;
 
 public class Member {
+	public final static int maxBicycles = 2;
+	
 	private String firstName, lastName, PIDNbr, telNbr, PINCode;
 	private boolean suspended;
 	private Date checkedIn, suspExpDate;
+	private String[] bicycles;
 	
-	public Member(String firstName, String lastName, String PIDNbr, String telNbr) {
+	public Member(String firstName, String lastName, String PIDNbr, String telNbr, String PINCode) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.PIDNbr = PIDNbr;
 		this.telNbr = telNbr;
 		suspended = false;
 		suspExpDate = new Date();
-		//this.PINCode = PINCode;
-//		TODO: Insert code for generating PIN code
+		this.PINCode = PINCode;
+		bicycles = new String[maxBicycles];
 	}
+	public boolean addBicycle(String barcode){
+		return false;
+	}
+	
 	
 	public void suspend(Date suspendUntil) {
 		suspExpDate = suspendUntil;
@@ -50,12 +57,12 @@ public class Member {
 		return PINCode;
 	}
 	
-	public String changePIN() {
+	public String changePIN(String PINCode) {
 //		TODO: Insert code for generating PIN code
 		return null;
 	}
 	
-	public Bicycle[] getBicycles() {
+	public String[] getBicycles() {
 //		TODO: Code for looking up bicycles
 		return null;
 	}
