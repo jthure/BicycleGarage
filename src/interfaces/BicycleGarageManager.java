@@ -2,7 +2,6 @@ package interfaces;
 
 
 public interface BicycleGarageManager {
-
 	public void registerHardwareDrivers(BarcodePrinter printer,
 			ElectronicLock entryLock, ElectronicLock exitLock,
 			PinCodeTerminal terminal);

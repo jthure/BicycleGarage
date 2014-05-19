@@ -54,4 +54,9 @@ public class Member {
 //		TODO: Insert code for generating PIN code
 		return null;
 	}
+	
+	public Bicycle[] getBicycles() {
+//		TODO: Code for looking up bicycles
+		return null;
+	}
 }

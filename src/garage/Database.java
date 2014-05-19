@@ -6,13 +6,14 @@ import entities.Bicycle;
 import entities.Member;
 
 public class Database {
-	private LimitedHashMap<String, Bicycle> bicycles;
-	private LimitedHashMap<String, Member> members;
+	private LimitedHashMap<String, LinkedList<Member>> members;
+	private LimitedHashMap<String, LinkedList<Bicycle>> bicycles;
+	private HashMap<String, String> PIN_MemberPairs;
 	private LinkedList<String> availablePIN, availableBar;
 	
 	public Database(int maxBikes, int maxMembers) {
-		bicycles = new LimitedHashMap<String, Bicycle>(maxBikes);
-		members = new LimitedHashMap<String, Member>(maxMembers);
+		members = new LimitedHashMap<String, LinkedList<Member>>(maxMembers);
+		bicycles = new LimitedHashMap<String, LinkedList<Bicycle>>(maxBikes);
 		generateCodes(availablePIN, 6);
 		generateCodes(availableBar, 5);
 	}
@@ -26,4 +27,15 @@ public class Database {
 		}
 		Collections.shuffle(list);
 	}
+	
+//	public boolean addMember(Member m) {
+//		if (members.put(m.getPIDNbr(), m) != null) {
+//			PIN_MemberPairs.put(m.getPIN(), m.getPIDNbr());
+//			
+//		}
+//	}
+//	
+//	public Member getMember(String PIDNbr) {
+//		return members.get(PIDNbr);
+//	}
 }

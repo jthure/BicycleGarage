@@ -24,4 +24,8 @@ public class Bicycle {
 		parked = true;
 		return true;
 	}
+	
+	public boolean isParked() {
+		return parked;
+	}
 }
