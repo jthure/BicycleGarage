@@ -19,7 +19,7 @@ public class BicycleGarage {
         readerEntry.register(manager);
         readerExit.register(manager);
         
-        new GUI(db);
+        new GUI(db, printer);
     }
     public static void main(String[] args) {
         new BicycleGarage();
