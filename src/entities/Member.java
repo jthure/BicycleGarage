@@ -5,6 +5,7 @@ import java.util.Date;
 
 public class Member {
 	public final static int MAX_BICYCLES = 2;
+	public final static long CHECK_IN_TIME = 600000;	// represented in milliseconds
 	
 	private String firstName, lastName, PIDNbr, telNbr, PINCode;
 	private Date checkedIn, suspExpDate;
@@ -18,6 +19,17 @@ public class Member {
 		suspExpDate = new Date();
 		this.PINCode = PINCode;
 		bicycles = new ArrayList<String>(MAX_BICYCLES);
+	}
+	
+	public boolean isCheckedIn() {
+		if ((new Date()).getTime() - checkedIn.getTime() < CHECK_IN_TIME) {
+			return true;
+		}
+		return false;
+	}
+	
+	public void checkIn() {
+		checkedIn = new Date();
 	}
 	
 	public boolean addBicycle(String barcode){

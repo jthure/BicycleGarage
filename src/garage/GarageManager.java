@@ -47,7 +47,7 @@ public class GarageManager implements BicycleGarageManager {
 	public void exitBarcode(String bicycleID) {
 		Bicycle bicycle = db.getBicycle(bicycleID);
 		if (bicycle != null) {
-			if (db.getMember(bicycle.getOwnerPIN().isCheckedIn())) {
+			if (db.getMember(bicycle.getOwnerPIN()).isCheckedIn()) {
 				exitLock.open(10);
 				bicycle.unPark();
 			}
