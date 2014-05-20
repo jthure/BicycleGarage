@@ -17,6 +17,10 @@ public class Bicycle {
 		return ownerPIN;
 	}
 	
+	public void setOwnerPIN(String PIN) {
+		ownerPIN = PIN;
+	}
+	
 	public boolean park() {
 		if (parked) {
 			return false;
@@ -24,6 +28,7 @@ public class Bicycle {
 		parked = true;
 		return true;
 	}
+	
 	public void unPark(){
 		parked = false;
 	}
@@ -31,6 +36,7 @@ public class Bicycle {
 	public boolean isParked() {
 		return parked;
 	}
+	
 	public String toString(){
 		return barCode;
 	}

@@ -19,6 +19,8 @@ public class Member {
 		suspExpDate = new Date();
 		this.PINCode = PINCode;
 		bicycles = new ArrayList<String>(MAX_BICYCLES);
+		checkedIn = new Date((new Date()).getTime() - CHECK_IN_TIME);	// Initialize check in date so that 
+																		// member is checked out when created
 	}
 	
 	public boolean isCheckedIn() {
@@ -93,6 +95,7 @@ public class Member {
 		}
 		return false;
 	}
+	
 	public String toString(){
 		return firstName + " " + lastName;
 	}
