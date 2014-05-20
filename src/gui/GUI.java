@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
@@ -46,6 +47,8 @@ public class GUI {
 	private JTextComponent tab2PINField;
 	private JTextComponent tab2BicycleStatusField;
 	private JTextComponent tab2BarcodeField;
+	
+	private Color defaultColor;
 
 	private DefaultListModel<Member> userListModel;
 	private UserList userList;
@@ -63,7 +66,7 @@ public class GUI {
 		menuBar.add(menu);
 		menu.add(new ExitMenuItem(db));
 		frame.setJMenuBar(menuBar);
-		Color defaultColor = frame.getBackground();
+		defaultColor = frame.getBackground();
 
 		JTabbedPane tabbedPane = new JTabbedPane();
 		frame.add(tabbedPane);
@@ -71,7 +74,7 @@ public class GUI {
 		// Tab1: Home
 		JPanel tab1Wrapper = new JPanel(new BorderLayout());
 
-		JTextArea textArea = new JTextArea("Bicycle Garage 2000");
+		JLabel textArea = new JLabel("Bicycle Garage 2000");
 		textArea.setBackground(defaultColor);
 		textArea.setFont(new Font("Arial", Font.BOLD, 20));
 		tab1Wrapper.add(textArea, BorderLayout.NORTH);
@@ -82,20 +85,16 @@ public class GUI {
 		tab1PIDField = new JTextField(10);
 		tab1TelField = new JTextField(10);
 		AddUserButton addUserButton = new AddUserButton(this);
-		textArea = new JTextArea("First name: ");
-		textArea.setBackground(defaultColor);
+		textArea = new JLabel("First name: ");
 		addUserWrapper.add(textArea);
 		addUserWrapper.add(tab1FnameField);
-		textArea = new JTextArea("Last name: ");
-		textArea.setBackground(defaultColor);
+		textArea = new JLabel("Last name: ");
 		addUserWrapper.add(textArea);
 		addUserWrapper.add(tab1LnameField);
-		textArea = new JTextArea("Personal ID: ");
-		textArea.setBackground(defaultColor);
+		textArea = new JLabel("Personal ID: ");
 		addUserWrapper.add(textArea);
 		addUserWrapper.add(tab1PIDField);
-		textArea = new JTextArea("Tel. number: ");
-		textArea.setBackground(defaultColor);
+		textArea = new JLabel("Tel. number: ");
 		addUserWrapper.add(textArea);
 		addUserWrapper.add(tab1TelField);
 
@@ -106,12 +105,12 @@ public class GUI {
 		JPanel tab2Wrapper = new JPanel(new BorderLayout());
 
 		JPanel topWrapper = new JPanel(new GridLayout(0, 2));
-		textArea = new JTextArea("Users");
+		textArea = new JLabel("Users");
 		textArea.setBackground(defaultColor);
 		textArea.setFont(new Font("Arial", Font.BOLD, 14));
 		topWrapper.add(textArea);
 
-		textArea = new JTextArea("Bicycles");
+		textArea = new JLabel("Bicycles");
 		textArea.setBackground(defaultColor);
 		textArea.setFont(new Font("Arial", Font.BOLD, 14));
 		topWrapper.add(textArea);
@@ -154,49 +153,36 @@ public class GUI {
 
 		JPanel botWrapper = new JPanel(new GridLayout(0, 2));
 		JPanel userInfoWrapper = new JPanel(new GridLayout(0, 2));
-		tab2FnameField = new JTextArea();
-		tab2LnameField = new JTextArea();
-		tab2PIDField = new JTextArea();
-		tab2TelField = new JTextArea();
-		tab2PINField = new JTextArea();
-		tab2SuspendedField = new JTextArea();
-		textArea = new JTextArea("First name: ");
-		textArea.setBackground(defaultColor);
-		userInfoWrapper.add(textArea);
+		tab2FnameField = infoTextArea();
+		tab2LnameField = infoTextArea();
+		tab2PIDField = infoTextArea();
+		tab2TelField = infoTextArea();
+		tab2PINField = infoTextArea();
+		tab2SuspendedField = infoTextArea();
+		userInfoWrapper.add(new JLabel("First name: "));
 		userInfoWrapper.add(tab2FnameField);
-		textArea = new JTextArea("Last name: ");
-		textArea.setBackground(defaultColor);
-		userInfoWrapper.add(textArea);
+		userInfoWrapper.add(new JLabel("Last name: "));
 		userInfoWrapper.add(tab2LnameField);
-		textArea = new JTextArea("Personal ID: ");
-		textArea.setBackground(defaultColor);
-		userInfoWrapper.add(textArea);
+		userInfoWrapper.add(new JLabel("Personal ID: "));
 		userInfoWrapper.add(tab2PIDField);
-		textArea = new JTextArea("Tel. number: ");
-		textArea.setBackground(defaultColor);
-		userInfoWrapper.add(textArea);
+		userInfoWrapper.add(new JLabel("Tel. number: "));
 		userInfoWrapper.add(tab2TelField);
-		textArea = new JTextArea("Suspended: ");
-		textArea.setBackground(defaultColor);
-		userInfoWrapper.add(textArea);
+		userInfoWrapper.add(new JLabel("Suspended: "));
 		userInfoWrapper.add(tab2SuspendedField);
-		textArea = new JTextArea("PIN-code: ");
-		textArea.setBackground(defaultColor);
-		userInfoWrapper.add(textArea);
+		userInfoWrapper.add(new JLabel("PIN-code: "));
 		userInfoWrapper.add(tab2PINField);
 		botWrapper.add(userInfoWrapper);
 
 		JPanel bicycleInfoWrapper = new JPanel(new GridLayout(0, 2));
-		tab2BicycleStatusField = new JTextArea();
-		tab2BarcodeField = new JTextArea();
-		textArea = new JTextArea("Parked in garage: ");
-		textArea.setBackground(defaultColor);
-		bicycleInfoWrapper.add(textArea);
+		tab2BicycleStatusField = infoTextArea();
+		tab2BarcodeField = infoTextArea();
+		bicycleInfoWrapper.add(new JLabel("Parked in garage: "));
 		bicycleInfoWrapper.add(tab2BicycleStatusField);
-		textArea = new JTextArea("Barcode: ");
-		textArea.setBackground(defaultColor);
-		bicycleInfoWrapper.add(textArea);
+		bicycleInfoWrapper.add(new JLabel("Barcode: "));
 		bicycleInfoWrapper.add(tab2BarcodeField);
+		for(int i=0; i<8; i++){
+			bicycleInfoWrapper.add(new JLabel());
+		}
 		botWrapper.add(bicycleInfoWrapper);
 
 		tab2Wrapper.add(topWrapper, BorderLayout.NORTH);
@@ -318,6 +304,13 @@ public class GUI {
 	public void changePIN() {
 		// TODO Auto-generated method stub
 
+	}
+	
+	private JTextArea infoTextArea(){
+		JTextArea textArea = new JTextArea();
+		textArea.setEditable(false);
+		textArea.setBackground(defaultColor);
+		return textArea;
 	}
 
 }
