@@ -283,8 +283,9 @@ public class GUI {
 	public void onBicycleSelect() {
 		Bicycle b = bicycleList.getSelectedValue();
 		if (b != null) {
-			String s = String.valueOf(b.isParked());
-			tab2BicycleStatusField.setText(s);
+			tab2BicycleStatusField.setText(String.valueOf(b.isParked()));
+			tab2BarcodeField.setText(b.getBarcode());
+			
 		}
 	}
 	/**
