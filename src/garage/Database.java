@@ -175,4 +175,16 @@ public class Database implements DatabaseInterface {
 		return false;
 	}
 
+	@Override
+	public boolean isFull() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean setMaxParkingslots() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

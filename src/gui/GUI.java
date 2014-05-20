@@ -36,6 +36,8 @@ public class GUI {
 	private JTextField tab1LnameField;
 	private JTextField tab1PIDField;
 	private JTextField tab1TelField;
+	
+	private JTextField tab1MaxParkingSlots;
 
 	private JTextField tab2UserSearchField;
 
@@ -75,9 +77,14 @@ public class GUI {
 		JPanel tab1Wrapper = new JPanel(new BorderLayout());
 
 		JLabel textArea = new JLabel("Bicycle Garage 2000");
-		textArea.setBackground(defaultColor);
 		textArea.setFont(new Font("Arial", Font.BOLD, 20));
 		tab1Wrapper.add(textArea, BorderLayout.NORTH);
+		
+		JPanel setMaxParkingSlotsWrapper = new JPanel();
+		tab1MaxParkingSlots = new JTextField(10);
+		setMaxParkingSlotsWrapper.add(new SetMaxParkingButton(this));
+		setMaxParkingSlotsWrapper.add(tab1MaxParkingSlots);
+		tab1Wrapper.add(setMaxParkingSlotsWrapper, BorderLayout.CENTER);
 
 		JPanel addUserWrapper = new JPanel(new GridLayout(0, 2));
 		tab1FnameField = new JTextField(10);
@@ -85,17 +92,13 @@ public class GUI {
 		tab1PIDField = new JTextField(10);
 		tab1TelField = new JTextField(10);
 		AddUserButton addUserButton = new AddUserButton(this);
-		textArea = new JLabel("First name: ");
-		addUserWrapper.add(textArea);
+		addUserWrapper.add(new JLabel("First name: "));
 		addUserWrapper.add(tab1FnameField);
-		textArea = new JLabel("Last name: ");
-		addUserWrapper.add(textArea);
+		addUserWrapper.add(new JLabel("Last name: "));
 		addUserWrapper.add(tab1LnameField);
-		textArea = new JLabel("Personal ID: ");
-		addUserWrapper.add(textArea);
+		addUserWrapper.add(new JLabel("Personal ID: "));
 		addUserWrapper.add(tab1PIDField);
-		textArea = new JLabel("Tel. number: ");
-		addUserWrapper.add(textArea);
+		addUserWrapper.add(new JLabel("Tel. number: "));
 		addUserWrapper.add(tab1TelField);
 
 		addUserWrapper.add(addUserButton);
@@ -106,12 +109,10 @@ public class GUI {
 
 		JPanel topWrapper = new JPanel(new GridLayout(0, 2));
 		textArea = new JLabel("Users");
-		textArea.setBackground(defaultColor);
 		textArea.setFont(new Font("Arial", Font.BOLD, 14));
 		topWrapper.add(textArea);
 
 		textArea = new JLabel("Bicycles");
-		textArea.setBackground(defaultColor);
 		textArea.setFont(new Font("Arial", Font.BOLD, 14));
 		topWrapper.add(textArea);
 
@@ -311,6 +312,11 @@ public class GUI {
 		textArea.setEditable(false);
 		textArea.setBackground(defaultColor);
 		return textArea;
+	}
+
+	public void setMaxParkingSlots() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
