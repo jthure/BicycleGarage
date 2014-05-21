@@ -468,7 +468,7 @@ public class GUI {
 		DateFormat formatter = new SimpleDateFormat(dateFormat);
 		Date fDate = formatter.parse(from);
 		Date tDate = formatter.parse(to);
-//		int[][] data = Statistics.getData(fDate, tDate);
+		int[][] data = Statistics.getData(fDate, tDate);
 //		table = new JTable(data, columnNames);
 	}
 	

@@ -35,6 +35,10 @@ public class Database implements DatabaseInterface {
  
 	private void generateCodes(LinkedList<String> list, int digits) {
 		String leadingZeroes = "%0" + digits + "d";
+<<<<<<< HEAD
+=======
+
+>>>>>>> c00fb7a85f5e340ca201f28b798a0612fa46fc08
 		for (int i = 0; i < Math.pow(10, digits); i++) {
 			list.add(String.format(leadingZeroes, i));
 		}
@@ -215,6 +219,10 @@ public class Database implements DatabaseInterface {
 	public boolean setMaxParkingslots() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	public void setMaxBicycleCapacity(int limit){
+		bicycles.changeMaxCapacity(limit);
 	}
 
 	public int getMemberSize() {
