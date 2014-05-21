@@ -186,5 +186,9 @@ public class Database implements DatabaseInterface {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	public void setMaxBicycleCapacity(int limit){
+		bicycles.changeMaxCapacity(limit);
+	}
 
 }
