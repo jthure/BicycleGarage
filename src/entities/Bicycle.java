@@ -1,6 +1,8 @@
 package entities;
 
-public class Bicycle {
+import java.io.Serializable;
+
+public class Bicycle implements Serializable{
 	private String barCode, ownerPIN;
 	private boolean parked;
 	

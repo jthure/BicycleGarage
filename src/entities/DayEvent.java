@@ -1,8 +1,9 @@
 package entities;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class DayEvent {
+public class DayEvent implements Serializable {
 	Date day;
 	int members, bicycles, membersCheckedIn, bicyclesInGarage;
 
