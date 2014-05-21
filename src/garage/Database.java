@@ -98,18 +98,21 @@ public class Database implements DatabaseInterface {
 	}
 
 	public String changePIN(String oldPIN) {
-		Member m = members.get(oldPIN);		// Get member	
-		members.remove(oldPIN);				// Remove old entry
-		String newPIN = availablePIN.pop();	// Get new PIN
-		m.setPIN(newPIN);					// Change PIN
-		members.put(newPIN, m);				// Put in new entry
-		for (String s : m.getBicycles()) {
-			Bicycle b = bicycles.get(s);		// Get bicycle
-			b.setOwnerPIN(newPIN);				// Change PIN
-			bicycles.put(b.getBarcode(), b);	// Put back in
+		if (members.containsKey(oldPIN)) {
+			Member m = members.get(oldPIN);		// Get member	
+			members.remove(oldPIN);				// Remove old entry
+			String newPIN = availablePIN.pop();	// Get new PIN
+			m.setPIN(newPIN);					// Change PIN
+			members.put(newPIN, m);				// Put in new entry
+			for (String s : m.getBicycles()) {
+				Bicycle b = bicycles.get(s);		// Get bicycle
+				b.setOwnerPIN(newPIN);				// Change PIN
+				bicycles.put(b.getBarcode(), b);	// Put back in
+			}
+			availablePIN.add(oldPIN);		// Put back old PIN
+			return newPIN;
 		}
-		availablePIN.add(oldPIN);		// Put back old PIN
-		return newPIN;
+		return null;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -208,15 +211,6 @@ public class Database implements DatabaseInterface {
 		return false;
 	}
 	
-//	public Member[] getMemberList() {
-//		Member[] ms = new Member[members.size()];
-//		int i = 0;
-//		for (Member m : members.values()) {
-//			ms[i] = m;
-//			i++;
-//		}
-//		return ms;
-//	}
 
 	public boolean isFull() {
 		// TODO Auto-generated method stub
@@ -255,8 +249,11 @@ public class Database implements DatabaseInterface {
 		return dayEvents;
 	}
 
-	public boolean suspendMember(String PIDNbr) {
-		// TODO Auto-generated method stub
+	public boolean suspendMember(String PIN, Date until) {
+		if (members.containsKey(PIN)) {
+			members.get(PIN).suspend(until);
+			return true;
+		}
 		return false;
 	}
 	
@@ -279,6 +276,9 @@ public class Database implements DatabaseInterface {
 		}
 		return null;
 	}
+	/**
+	 * End test methods
+	 */
 
 	public int getBicyclesInGarage() {
 		int counter = 0;
@@ -291,5 +291,13 @@ public class Database implements DatabaseInterface {
 	
 	public Statistics getStats(){
 		return stats;
+	}
+
+	public boolean unsuspendMember(String PIN) {
+		if (members.containsKey(PIN)) {
+			members.get(PIN).unsuspend();
+			return true;
+		}
+		return false;
 	}
 }
