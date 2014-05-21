@@ -71,18 +71,18 @@ public class Database implements DatabaseInterface {
 		return members.get(PIN);
 	}
 
-	public LinkedList<Member> findMembersByName(String name) {
-		LinkedList<Member> matchedMembers = new LinkedList<>();
+	public LinkedList<Member> getUsersWithNameRegex(String name) {
+		LinkedList<Member> matchedUsers = new LinkedList<>();
 		Set<Entry<String, Member>> set = members.entrySet();
 		for (Entry<String, Member> e : set) {
 			Member member = e.getValue();
 			String regexName = "(?i)" + name + ".*";
 			if (member.getInfo()[0].matches(regexName)
 					|| member.getInfo()[1].matches(regexName)) {
-				matchedMembers.add(member);
+				matchedUsers.add(member);
 			}
 		}
-		return matchedMembers;
+		return matchedUsers;
 	}
 
 	public boolean addBicycle(Member m, BarcodePrinter p) {
@@ -198,10 +198,53 @@ public class Database implements DatabaseInterface {
 		writeToFile(this.availablePIN, "availablePIN.bg");
 		saveStats();
 	}
+	public void saveStats(){
+		writeToFile(this.dayEvents, "stats.bg");
+	}
+
+//	public void saveDatabase(String members, String bicycles,
+//			String availablePIN, String availableBar) {
+//		writeToFile(this.members, members);
+//		writeToFile(this.bicycles, bicycles);
+//		writeToFile(this.availablePIN, availablePIN);
+//		writeToFile(this.availableBar, availableBar);
+//		 try {
+//		 FileOutputStream fout = new FileOutputStream(new File("db/" +
+//		 members));
+//		 ObjectOutputStream oos = new ObjectOutputStream(fout);
+//		 oos.writeObject(this.members);
+//		 oos.close();
+//		 fout.close();
+//		
+//		 fout = new FileOutputStream("db\\" + bicycles);
+//		 oos = new ObjectOutputStream(fout);
+//		 oos.writeObject(this.bicycles);
+//		 oos.close();
+//		 fout.close();
+//		
+//		 fout = new FileOutputStream("db\\" + availablePIN);
+//		 oos = new ObjectOutputStream(fout);
+//		 oos.writeObject(this.availablePIN);
+//		 oos.close();
+//		 fout.close();
+//		
+//		 fout = new FileOutputStream("db\\" + availableBar);
+//		 oos = new ObjectOutputStream(fout);
+//		 oos.writeObject(this.availableBar);
+//		 oos.close();
+//		 fout.close();
+//		 } catch (FileNotFoundException e) {
+//		 // TODO Auto-generated catch block
+//		 e.printStackTrace();
+//		 } catch (IOException e) {
+//		 // TODO Auto-generated catch block
+//		 e.printStackTrace();
+//		 }
+//	}
 
 	public boolean removeMember(String PIN) {
-		Member m = members.remove(PIN);
-		if (m != null) {
+		Member m = members.get(PIN);
+		if (members.remove(PIN) != null) {
 			availablePIN.add(PIN);
 			for (String b : m.getBicycles()) { // Remove members bicycles
 				bicycles.remove(b);
@@ -217,9 +260,9 @@ public class Database implements DatabaseInterface {
 	public boolean removeBicycle(String barcode) {
 		Bicycle b = bicycles.remove(barcode); // Remove bicycle
 		if (b != null) {
-			members.get(b.getOwnerPIN()).removeBicycle(barcode);	// Find owner
-//			m.removeBicycle(barcode);	// Remove bicycle from member
-//			members.put(m.getPIN(), m);	// Put member back into map
+			Member m = members.get(b.getOwnerPIN()); // Find owner
+			m.removeBicycle(barcode); // Remove bicycle from member
+			// members.put(m.getPIN(), m); // Put member back into map <- Varför
 			// detta?
 			availableBar.add(barcode);
 			stats.bicycleChange();
@@ -228,16 +271,16 @@ public class Database implements DatabaseInterface {
 		}
 		return false;
 	}
-	
-//	public Member[] getMemberList() {
-//		Member[] ms = new Member[members.size()];
-//		int i = 0;
-//		for (Member m : members.values()) {
-//			ms[i] = m;
-//			i++;
-//		}
-//		return ms;
-//	}
+
+	// public Member[] getMemberList() {
+	// Member[] ms = new Member[members.size()];
+	// int i = 0;
+	// for (Member m : members.values()) {
+	// ms[i] = m;
+	// i++;
+	// }
+	// return ms;
+	// }
 
 	public boolean setMaxParkingslots() {
 		// TODO Auto-generated method stub
@@ -272,11 +315,6 @@ public class Database implements DatabaseInterface {
 		return dayEvents;
 	}
 
-	public boolean suspendMember(String PIDNbr) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
 	/**
 	 * Test methods
 	 */
@@ -299,6 +337,7 @@ public class Database implements DatabaseInterface {
 		return null;
 	}
 
+	@Override
 	public int getBicyclesInGarage() {
 		int counter = 0;
 		for (Entry<String, Bicycle> e : bicycles.entrySet()) {
@@ -308,6 +347,7 @@ public class Database implements DatabaseInterface {
 		return counter;
 	}
 
+	// Testing
 	public Statistics getStats() {
 		return stats;
 	}

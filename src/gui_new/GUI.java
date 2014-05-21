@@ -5,57 +5,33 @@ import entities.Member;
 import garage.Database;
 import garage.Statistics;
 import interfaces.BarcodePrinter;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
-
 import java.awt.BorderLayout;
-
+import javax.swing.DefaultListModel;
 import javax.swing.JDesktopPane;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
-
 import net.miginfocom.swing.MigLayout;
-
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.JComboBox;
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.JPopupMenu;
-
-import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.Canvas;
-
 import javax.swing.JPanel;
-
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-
-import javax.swing.BoxLayout;
-import javax.swing.JSplitPane;
 import javax.swing.JTable;
-
 import java.awt.Font;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import javax.swing.JSpinner;
+import java.util.LinkedList;
 
 public class GUI {
 	private Database db;
@@ -80,7 +56,6 @@ public class GUI {
 	private JInternalFrame internalFrame_AddBike;
 	private JInternalFrame internalFrame_Bikes;
 	private JInternalFrame internalFrame_Members;
-	private JInternalFrame internalFrame_Monitor;
 	private JList<Member> list_Members;
 	private JList<Bicycle> list_Bikes;
 	private JCheckBox chckbxSuspended;
@@ -91,6 +66,10 @@ public class GUI {
 	private JTable table;
 	private JTextField textField;
 	private JTextField textField_1;
+	private JTextField textField_Search;
+	private JTextField textField_SearchBike;
+	private DefaultListModel<Member> memberListModel;
+	private DefaultListModel<Bicycle> bicycleListModel;
 
 	/**
 	 * Create the application.
@@ -214,35 +193,43 @@ public class GUI {
 		internalFrame_Bikes.setClosable(true);
 		internalFrame_Bikes.setBounds(240, 11, 220, 350);
 		desktopPane.add(internalFrame_Bikes);
-		internalFrame_Bikes.getContentPane().setLayout(new MigLayout("", "[grow][grow][][]", "[grow][][][][]"));
+		internalFrame_Bikes.getContentPane().setLayout(new MigLayout("", "[grow][grow][][]", "[grow][][][][][]"));
 		
-		JList<Bicycle> list_Bikes = new JList<Bicycle>();
+		bicycleListModel = new DefaultListModel<Bicycle>();
+		list_Bikes = new JList<Bicycle>(bicycleListModel);
 		internalFrame_Bikes.getContentPane().add(list_Bikes, "cell 0 0 4 1,grow");
 		
+		textField_SearchBike = new JTextField();
+		internalFrame_Bikes.getContentPane().add(textField_SearchBike, "cell 0 1 3 1,growx");
+		textField_SearchBike.setColumns(10);
+		
+		JButton btnSearchBike = new JButton("Search");
+		internalFrame_Bikes.getContentPane().add(btnSearchBike, "cell 3 1");
+		
 		JLabel lblBarCode_1 = new JLabel("Bar code");
-		internalFrame_Bikes.getContentPane().add(lblBarCode_1, "cell 0 1,alignx center");
+		internalFrame_Bikes.getContentPane().add(lblBarCode_1, "cell 0 2,alignx center");
 		
 		textField_Barcode = new JTextField();
 		textField_Barcode.setEditable(false);
-		internalFrame_Bikes.getContentPane().add(textField_Barcode, "cell 1 1 3 1,growx");
+		internalFrame_Bikes.getContentPane().add(textField_Barcode, "cell 1 2 3 1,growx");
 		textField_Barcode.setColumns(10);
 		
 		JLabel lblOwner_1 = new JLabel("Owner");
-		internalFrame_Bikes.getContentPane().add(lblOwner_1, "cell 0 2,alignx center");
+		internalFrame_Bikes.getContentPane().add(lblOwner_1, "cell 0 3,alignx center");
 		
 		textField_Owner = new JTextField();
 		textField_Owner.setEditable(false);
-		internalFrame_Bikes.getContentPane().add(textField_Owner, "cell 1 2 3 1,growx");
+		internalFrame_Bikes.getContentPane().add(textField_Owner, "cell 1 3 3 1,growx");
 		textField_Owner.setColumns(10);
 		
 		chckbxParked = new JCheckBox("Parked");
-		internalFrame_Bikes.getContentPane().add(chckbxParked, "cell 0 3,alignx left");
+		internalFrame_Bikes.getContentPane().add(chckbxParked, "cell 0 4,alignx left");
 		
 		JButton btnRemoveBicycle = new JButton("Remove Bicycle");
-		internalFrame_Bikes.getContentPane().add(btnRemoveBicycle, "cell 1 3 3 1,grow");
+		internalFrame_Bikes.getContentPane().add(btnRemoveBicycle, "cell 1 4 3 1,grow");
 		
 		JButton btnNewBarcode = new JButton("Print New Bar Code");
-		internalFrame_Bikes.getContentPane().add(btnNewBarcode, "cell 0 4 4 1,grow");
+		internalFrame_Bikes.getContentPane().add(btnNewBarcode, "cell 0 5 4 1,grow");
 		
 		/**
 		 * Internal Frame
@@ -290,9 +277,10 @@ public class GUI {
 		internalFrame_Members.setLocation(483, 11);
 		internalFrame_Members.setClosable(true);
 		desktopPane.add(internalFrame_Members);
-		internalFrame_Members.getContentPane().setLayout(new MigLayout("", "[grow][][][grow][grow][grow][grow]", "[grow,fill][][][][]"));
+		internalFrame_Members.getContentPane().setLayout(new MigLayout("", "[grow][][][grow][grow][grow][grow]", "[grow,fill][][][][][]"));
 		
-		list_Members = new JList<Member>();
+		memberListModel = new DefaultListModel<Member>();
+		list_Members = new JList<Member>(memberListModel);
 		list_Members.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
 				showSelectedMember();
@@ -303,34 +291,40 @@ public class GUI {
 			fetchMemberList();
 		}
 		
+		textField_Search = new JTextField();
+		internalFrame_Members.getContentPane().add(textField_Search, "cell 0 1 6 1,growx");
+		textField_Search.setColumns(10);
+		
+		JButton btnSearch = new JButton("Search");
+		btnSearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SearchMember(textField_Search.getText());
+			}
+		});
+		internalFrame_Members.getContentPane().add(btnSearch, "cell 6 1,growx");
+		
 		JLabel lblName = new JLabel("Name");
-		internalFrame_Members.getContentPane().add(lblName, "cell 0 1,alignx center");
+		internalFrame_Members.getContentPane().add(lblName, "cell 0 2,alignx center");
 		
 		textField_Name = new JTextField();
 		textField_Name.setEditable(false);
-		internalFrame_Members.getContentPane().add(textField_Name, "cell 1 1 6 1,growx");
+		internalFrame_Members.getContentPane().add(textField_Name, "cell 1 2 6 1,growx");
 		textField_Name.setColumns(10);
 		
 		JLabel lblPid = new JLabel("PID");
-		internalFrame_Members.getContentPane().add(lblPid, "cell 0 2,alignx center");
+		internalFrame_Members.getContentPane().add(lblPid, "cell 0 3,alignx center");
 		
 		textField_PID = new JTextField();
 		textField_PID.setEditable(false);
-		internalFrame_Members.getContentPane().add(textField_PID, "cell 1 2 4 1,growx");
+		internalFrame_Members.getContentPane().add(textField_PID, "cell 1 3 3 1,growx");
 		textField_PID.setColumns(10);
 		
-		chckbxSuspended = new JCheckBox("Suspended");
-		internalFrame_Members.getContentPane().add(chckbxSuspended, "cell 5 2,alignx center");
-		
-		chckbxCheckedIn = new JCheckBox("Checked in");
-		internalFrame_Members.getContentPane().add(chckbxCheckedIn, "cell 6 2");
-		
 		JLabel lblPin = new JLabel("PIN");
-		internalFrame_Members.getContentPane().add(lblPin, "cell 0 3,alignx center");
+		internalFrame_Members.getContentPane().add(lblPin, "cell 4 3,alignx center");
 		
 		textField_PIN = new JTextField();
 		textField_PIN.setEditable(false);
-		internalFrame_Members.getContentPane().add(textField_PIN, "cell 1 3");
+		internalFrame_Members.getContentPane().add(textField_PIN, "cell 5 3");
 		textField_PIN.setColumns(10);
 		
 		JButton btnChangePIN = new JButton("New PIN");
@@ -339,31 +333,30 @@ public class GUI {
 				changePIN();
 			}
 		});
-		internalFrame_Members.getContentPane().add(btnChangePIN, "cell 2 3,growx,aligny center");
+		internalFrame_Members.getContentPane().add(btnChangePIN, "cell 6 3,growx,aligny center");
 		
 		JLabel lblTel = new JLabel("Tel. No.");
-		internalFrame_Members.getContentPane().add(lblTel, "cell 4 3,alignx center");
+		internalFrame_Members.getContentPane().add(lblTel, "cell 0 4,alignx center");
 		
 		textField_Tel = new JTextField();
-		internalFrame_Members.getContentPane().add(textField_Tel, "cell 5 3,growx");
+		textField_Tel.setEditable(false);
+		internalFrame_Members.getContentPane().add(textField_Tel, "cell 1 4 4 1,growx");
 		textField_Tel.setColumns(10);
 		
-		JButton btnChangeTel = new JButton("Change");
-		btnChangeTel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				
-			}
-		});
-		internalFrame_Members.getContentPane().add(btnChangeTel, "cell 6 3,growx");
+		chckbxSuspended = new JCheckBox("Suspended");
+		internalFrame_Members.getContentPane().add(chckbxSuspended, "cell 5 4,alignx center");
+		
+		chckbxCheckedIn = new JCheckBox("Checked in");
+		internalFrame_Members.getContentPane().add(chckbxCheckedIn, "cell 6 4,alignx center");
 		
 		JLabel lblBicycles = new JLabel("Bicycles");
-		internalFrame_Members.getContentPane().add(lblBicycles, "cell 0 4,alignx center");
+		internalFrame_Members.getContentPane().add(lblBicycles, "cell 0 5,alignx center");
 		
 		comboBox_Bikes = new JComboBox<String>();
-		internalFrame_Members.getContentPane().add(comboBox_Bikes, "cell 1 4 4 1,grow");
+		internalFrame_Members.getContentPane().add(comboBox_Bikes, "cell 1 5 4 1,grow");
 		
 		JButton btnManageBikes = new JButton("Manage");
-		internalFrame_Members.getContentPane().add(btnManageBikes, "cell 5 4,grow");
+		internalFrame_Members.getContentPane().add(btnManageBikes, "cell 5 5,grow");
 		
 		JButton btnAddBike = new JButton("Add Bike");
 		btnAddBike.addActionListener(new ActionListener() {
@@ -371,7 +364,7 @@ public class GUI {
 				addBikeDialog();
 			}
 		});
-		internalFrame_Members.getContentPane().add(btnAddBike, "cell 6 4,grow");
+		internalFrame_Members.getContentPane().add(btnAddBike, "cell 6 5,grow");
 		
 		JMenuBar menuBar_1 = new JMenuBar();
 		internalFrame_Members.setJMenuBar(menuBar_1);
@@ -396,35 +389,6 @@ public class GUI {
 		
 		JMenuItem mntmCheckStatus = new JMenuItem("Check Status");
 		mnMembersSuspension.add(mntmCheckStatus);
-		
-		internalFrame_Monitor = new JInternalFrame("Garage Monitor");
-		internalFrame_Monitor.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		internalFrame_Monitor.setResizable(true);
-		internalFrame_Monitor.setClosable(true);
-		internalFrame_Monitor.setBounds(20, 372, 409, 298);
-		desktopPane.add(internalFrame_Monitor);
-		internalFrame_Monitor.getContentPane().setLayout(new MigLayout("", "[grow][30px:n][grow][30px:n]", "[][grow][]"));
-		
-		JLabel lblMembersCheckedIn = new JLabel("Members checked in:");
-		internalFrame_Monitor.getContentPane().add(lblMembersCheckedIn, "cell 0 0");
-		
-		JLabel label_CheckedIn = new JLabel("0");
-		internalFrame_Monitor.getContentPane().add(label_CheckedIn, "cell 1 0,alignx center");
-		
-		JLabel lblBicyclesParked = new JLabel("Bicycles parked:");
-		internalFrame_Monitor.getContentPane().add(lblBicyclesParked, "cell 2 0");
-		
-		JLabel label_Parked = new JLabel("0");
-		internalFrame_Monitor.getContentPane().add(label_Parked, "cell 3 0,alignx center");
-		
-		JList<Member> list_CheckedIn = new JList<Member>();
-		internalFrame_Monitor.getContentPane().add(list_CheckedIn, "cell 0 1 2 1,grow");
-		
-		JList<Bicycle> list_Parked = new JList<Bicycle>();
-		internalFrame_Monitor.getContentPane().add(list_Parked, "cell 2 1 2 1,grow");
-		
-		JButton btnRefresh = new JButton("Refresh");
-		internalFrame_Monitor.getContentPane().add(btnRefresh, "cell 0 2 4 1,grow");
 		
 		JPanel panel = new JPanel();
 		tabbedPane.addTab("New tab", null, panel, null);
@@ -467,6 +431,15 @@ public class GUI {
 		panel.add(btnStats, "cell 2 5 4 1,growx");
 	}
 	
+	private void SearchMember(String name) {
+		LinkedList<Member> matched = db.findMembersByName(name);
+		memberListModel.clear();
+		textField_Search.setText("");
+		for (Member m : matched) {
+			memberListModel.addElement(m);
+		}
+	}
+
 	@SuppressWarnings("deprecation")
 	private void getStats(String from, String to) throws ParseException {
 		String[] columnNames = {"Members", "Bicycles", "Bicycles parked", "Members checked in"};
@@ -480,16 +453,21 @@ public class GUI {
 	}
 	
 	private void addMember() {
-		db.addMember(textField_fName.getText(),
+		if (db.addMember(textField_fName.getText(),
 				textField_lName.getText(),
 				textField_AddPID.getText(),
-				textField_AddTel.getText());
-		fetchMemberList();
+				textField_AddTel.getText())) {
+			JOptionPane.showMessageDialog(internalFrame_AddBike,
+					"Member successfully added.",
+					"Member added",
+					JOptionPane.PLAIN_MESSAGE);
+		}
+		
 	}
 
 	private void addBicycle() {
 		Member m = db.getMember(textField_OwnerPIN.getText());
-		if (m.getBicycles().size() < 2) {
+		if (m.getBicycles().size() == 2) {
 			JOptionPane.showMessageDialog(internalFrame_AddBike,
 					"Member already has 2 bicycles.",
 					"Capacity reached",

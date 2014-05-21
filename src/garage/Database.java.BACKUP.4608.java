@@ -198,6 +198,49 @@ public class Database implements DatabaseInterface {
 		writeToFile(this.availablePIN, "availablePIN.bg");
 		saveStats();
 	}
+	public void saveStats(){
+		writeToFile(this.dayEvents, "stats.bg");
+	}
+
+//	public void saveDatabase(String members, String bicycles,
+//			String availablePIN, String availableBar) {
+//		writeToFile(this.members, members);
+//		writeToFile(this.bicycles, bicycles);
+//		writeToFile(this.availablePIN, availablePIN);
+//		writeToFile(this.availableBar, availableBar);
+//		 try {
+//		 FileOutputStream fout = new FileOutputStream(new File("db/" +
+//		 members));
+//		 ObjectOutputStream oos = new ObjectOutputStream(fout);
+//		 oos.writeObject(this.members);
+//		 oos.close();
+//		 fout.close();
+//		
+//		 fout = new FileOutputStream("db\\" + bicycles);
+//		 oos = new ObjectOutputStream(fout);
+//		 oos.writeObject(this.bicycles);
+//		 oos.close();
+//		 fout.close();
+//		
+//		 fout = new FileOutputStream("db\\" + availablePIN);
+//		 oos = new ObjectOutputStream(fout);
+//		 oos.writeObject(this.availablePIN);
+//		 oos.close();
+//		 fout.close();
+//		
+//		 fout = new FileOutputStream("db\\" + availableBar);
+//		 oos = new ObjectOutputStream(fout);
+//		 oos.writeObject(this.availableBar);
+//		 oos.close();
+//		 fout.close();
+//		 } catch (FileNotFoundException e) {
+//		 // TODO Auto-generated catch block
+//		 e.printStackTrace();
+//		 } catch (IOException e) {
+//		 // TODO Auto-generated catch block
+//		 e.printStackTrace();
+//		 }
+//	}
 
 	public boolean removeMember(String PIN) {
 		Member m = members.remove(PIN);
@@ -217,10 +260,16 @@ public class Database implements DatabaseInterface {
 	public boolean removeBicycle(String barcode) {
 		Bicycle b = bicycles.remove(barcode); // Remove bicycle
 		if (b != null) {
+<<<<<<< HEAD
+			Member m = members.get(b.getOwnerPIN()); // Find owner
+			m.removeBicycle(barcode); // Remove bicycle from member
+			// members.put(m.getPIN(), m); // Put member back into map <- Varför
+			// detta?
+=======
 			members.get(b.getOwnerPIN()).removeBicycle(barcode);	// Find owner
 //			m.removeBicycle(barcode);	// Remove bicycle from member
 //			members.put(m.getPIN(), m);	// Put member back into map
-			// detta?
+>>>>>>> 4301d741d4371b327fdf292b8e9ec86062c84890
 			availableBar.add(barcode);
 			stats.bicycleChange();
 			saveBicycles();saveAvailableBar();
@@ -228,16 +277,16 @@ public class Database implements DatabaseInterface {
 		}
 		return false;
 	}
-	
-//	public Member[] getMemberList() {
-//		Member[] ms = new Member[members.size()];
-//		int i = 0;
-//		for (Member m : members.values()) {
-//			ms[i] = m;
-//			i++;
-//		}
-//		return ms;
-//	}
+
+	// public Member[] getMemberList() {
+	// Member[] ms = new Member[members.size()];
+	// int i = 0;
+	// for (Member m : members.values()) {
+	// ms[i] = m;
+	// i++;
+	// }
+	// return ms;
+	// }
 
 	public boolean setMaxParkingslots() {
 		// TODO Auto-generated method stub
@@ -272,11 +321,14 @@ public class Database implements DatabaseInterface {
 		return dayEvents;
 	}
 
+<<<<<<< HEAD
+=======
 	public boolean suspendMember(String PIDNbr) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 	
+>>>>>>> 4301d741d4371b327fdf292b8e9ec86062c84890
 	/**
 	 * Test methods
 	 */
@@ -307,8 +359,14 @@ public class Database implements DatabaseInterface {
 		}
 		return counter;
 	}
+<<<<<<< HEAD
 
+	// Testing
 	public Statistics getStats() {
+=======
+	
+	public Statistics getStats(){
+>>>>>>> 4301d741d4371b327fdf292b8e9ec86062c84890
 		return stats;
 	}
 	public LimitedHashMap<String, Member> getMembers(){

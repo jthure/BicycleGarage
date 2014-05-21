@@ -3,14 +3,12 @@ package garage;
 import interfaces.BarcodePrinter;
 import interfaces.DatabaseInterface;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -38,14 +36,11 @@ public class Database implements DatabaseInterface {
 		creationDate = new Date();
 		stats = new Statistics(this);
 	}
-
-	public Database(String members, String bicycles, String availablePIN,
-			String availableBar, String stats) {
-		loadDatabase(members, bicycles, availablePIN, availableBar, stats);
-		this.stats = new Statistics(this);
-		creationDate = dayEvents.get(0).getDay();
+	
+	public Database(String members, String bicycles, String availablePIN, String availableBar) {
+		loadDatabase(members, bicycles, availablePIN, availableBar);
 	}
-
+ 
 	private void generateCodes(LinkedList<String> list, int digits) {
 		String leadingZeroes = "%0" + digits + "d";
 		for (int i = 0; i < Math.pow(10, digits); i++) {
@@ -54,14 +49,12 @@ public class Database implements DatabaseInterface {
 		Collections.shuffle(list);
 	}
 
-	public boolean addMember(String fName, String lName, String PIDNbr,
-			String telNbr) {
+	public boolean addMember(String fName, String lName, String PIDNbr, String telNbr) {
 		String PIN = availablePIN.pop(); // Get new PIN
-		Member m = new Member(fName, lName, PIDNbr, telNbr, PIN); // Create
-																	// member
+		Member m = new Member(fName, lName, PIDNbr, telNbr, PIN); // Create member
 		if (members.put(PIN, m) != null) { // Check if full
 			stats.memberChange();
-			saveMembers(); saveAvailableBar();
+//			stats.memberChange(1);
 			return true;
 		}
 		return false;
@@ -71,18 +64,18 @@ public class Database implements DatabaseInterface {
 		return members.get(PIN);
 	}
 
-	public LinkedList<Member> findMembersByName(String name) {
-		LinkedList<Member> matchedMembers = new LinkedList<>();
+	public LinkedList<Member> getUsersWithNameRegex(String name) {
+		LinkedList<Member> matchedUsers = new LinkedList<>();
 		Set<Entry<String, Member>> set = members.entrySet();
 		for (Entry<String, Member> e : set) {
 			Member member = e.getValue();
 			String regexName = "(?i)" + name + ".*";
 			if (member.getInfo()[0].matches(regexName)
 					|| member.getInfo()[1].matches(regexName)) {
-				matchedMembers.add(member);
+				matchedUsers.add(member);
 			}
 		}
-		return matchedMembers;
+		return matchedUsers;
 	}
 
 	public boolean addBicycle(Member m, BarcodePrinter p) {
@@ -92,12 +85,11 @@ public class Database implements DatabaseInterface {
 			if (bicycles.put(barcode, b) != null) { // Check if db full
 				p.printBarcode(barcode);
 				stats.bicycleChange();
-				saveBicycles(); saveAvailableBar();
 				return true;
 			}
-			m.removeBicycle(barcode); // Remove inserted barcode if db was full
+			m.removeBicycle(barcode); //Remove inserted barcode if db was full
 		}
-		availableBar.add(barcode); // Put back retrieved barcode if failed.
+		availableBar.add(barcode); //Put back retrieved barcode if failed.
 		return false;
 	}
 
@@ -106,23 +98,22 @@ public class Database implements DatabaseInterface {
 	}
 
 	public String changePIN(String oldPIN) {
-		Member m = members.get(oldPIN); // Get member
-		members.remove(oldPIN); // Remove old entry
-		String newPIN = availablePIN.pop(); // Get new PIN
-		m.setPIN(newPIN); // Change PIN
-		members.put(newPIN, m); // Put in new entry
+		Member m = members.get(oldPIN);		// Get member	
+		members.remove(oldPIN);				// Remove old entry
+		String newPIN = availablePIN.pop();	// Get new PIN
+		m.setPIN(newPIN);					// Change PIN
+		members.put(newPIN, m);				// Put in new entry
 		for (String s : m.getBicycles()) {
-			Bicycle b = bicycles.get(s); // Get bicycle
-			b.setOwnerPIN(newPIN); // Change PIN
-			bicycles.put(b.getBarcode(), b); // Put back in
+			Bicycle b = bicycles.get(s);		// Get bicycle
+			b.setOwnerPIN(newPIN);				// Change PIN
+			bicycles.put(b.getBarcode(), b);	// Put back in
 		}
-		availablePIN.add(oldPIN); // Put back old PIN
+		availablePIN.add(oldPIN);		// Put back old PIN
 		return newPIN;
 	}
-
+	
 	@SuppressWarnings("unchecked")
-	public void loadDatabase(String members, String bicycles,
-			String availablePIN, String availableBar, String stats) {
+	public void loadDatabase(String members, String bicycles, String availablePIN, String availableBar) {
 		try {
 			FileInputStream fin = new FileInputStream("db\\" + members);
 			ObjectInputStream ois = new ObjectInputStream(fin);
@@ -147,12 +138,6 @@ public class Database implements DatabaseInterface {
 			this.availableBar = (LinkedList<String>) ois.readObject();
 			ois.close();
 			fin.close();
-			
-			fin = new FileInputStream("db\\" + stats);
-			ois = new ObjectInputStream(fin);
-			this.dayEvents = (ArrayList<DayEvent>) ois.readObject();
-			ois.close();
-			fin.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -165,65 +150,59 @@ public class Database implements DatabaseInterface {
 		}
 	}
 
-	private <T extends Serializable> void writeToFile(T object, String fileName) {
+	public void saveDatabase(String members, String bicycles, String availablePIN, String availableBar) {
 		try {
-			FileOutputStream fout = new FileOutputStream(new File("db\\"
-					+ fileName));
-			ObjectOutputStream oout = new ObjectOutputStream(fout);
-			oout.writeObject(object);
-			oout.close();
+			FileOutputStream fout = new FileOutputStream("db\\" + members);
+			ObjectOutputStream oos = new ObjectOutputStream(fout);
+			oos.writeObject(members);
+			oos.close();
+			fout.close();
+
+			fout = new FileOutputStream("db\\" + bicycles);
+			oos = new ObjectOutputStream(fout);
+			oos.writeObject(bicycles);
+			oos.close();
+			fout.close();
+
+			fout = new FileOutputStream("db\\" + availablePIN);
+			oos = new ObjectOutputStream(fout);
+			oos.writeObject(availablePIN);
+			oos.close();
+			fout.close();
+
+			fout = new FileOutputStream("db\\" + availableBar);
+			oos = new ObjectOutputStream(fout);
+			oos.writeObject(availableBar);
+			oos.close();
 			fout.close();
 		} catch (FileNotFoundException e) {
-			System.out.println("The path db/"+fileName+" could not be found");
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println("Error while serializing");
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-	}
-	public void saveMembers(){
-		writeToFile(this.members, "members.bg");
-		saveStats();
-	}
-	public void saveBicycles(){
-		writeToFile(this.bicycles, "bicycles.bg");
-		saveStats();
-	}
-	public void saveAvailableBar(){
-		writeToFile(this.availableBar, "availableBar.bg");
-		saveStats();
-	}
-	public void saveAvailablePIN(){
-		writeToFile(this.availablePIN, "availablePIN.bg");
-		saveStats();
 	}
 
 	public boolean removeMember(String PIN) {
-		Member m = members.remove(PIN);
-		if (m != null) {
+		Member m = members.get(PIN);
+		if (members.remove(PIN) != null) {
 			availablePIN.add(PIN);
-			for (String b : m.getBicycles()) { // Remove members bicycles
+			for (String b : m.getBicycles()) {	// Remove members bicycles
 				bicycles.remove(b);
 			}
-			stats.memberChange();
-			stats.bicycleChange();
-			saveMembers(); saveAvailableBar(); saveBicycles(); saveAvailablePIN();
 			return true;
 		}
 		return false;
 	}
 
 	public boolean removeBicycle(String barcode) {
-		Bicycle b = bicycles.remove(barcode); // Remove bicycle
+		Bicycle b = bicycles.remove(barcode);	// Remove bicycle
 		if (b != null) {
-			members.get(b.getOwnerPIN()).removeBicycle(barcode);	// Find owner
-//			m.removeBicycle(barcode);	// Remove bicycle from member
-//			members.put(m.getPIN(), m);	// Put member back into map
-			// detta?
+			Member m = members.get(b.getOwnerPIN());	// Find owner
+			m.removeBicycle(barcode);	// Remove bicycle from member
+			members.put(m.getPIN(), m);	// Put member back into map
 			availableBar.add(barcode);
-			stats.bicycleChange();
-			saveBicycles();saveAvailableBar();
 			return true;
 		}
 		return false;
@@ -239,42 +218,41 @@ public class Database implements DatabaseInterface {
 //		return ms;
 //	}
 
-	public boolean setMaxParkingslots() {
+	public boolean isFull() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	public void setMaxBicycleCapacity(int limit) {
+	public boolean setMaxParkingslots() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	public void setMaxBicycleCapacity(int limit){
 		bicycles.changeMaxCapacity(limit);
 	}
 
 	public int getMemberSize() {
 		return members.size();
 	}
-
 	public int getBicycleSize() {
 		return bicycles.size();
 	}
-
+	
 	public int getMaxMemberSize() {
 		return members.getMaxCapacity();
 	}
-
+	
 	public int getMaxBicycleSize() {
 		return bicycles.getMaxCapacity();
 	}
-
+	
 	public Date creationDate() {
 		return creationDate;
 	}
-
+	
 	public ArrayList<DayEvent> getDayEvents() {
 		return dayEvents;
-	}
-
-	public boolean suspendMember(String PIDNbr) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 	
 	/**
@@ -283,22 +261,21 @@ public class Database implements DatabaseInterface {
 	public LinkedList<String> getAvailPIN() {
 		return availablePIN;
 	}
-
+	
 	public LinkedList<String> getAvailBar() {
 		return availableBar;
 	}
-
+	
 	public String addMember(String[] info) {
 		String PIN = availablePIN.pop(); // Get new PIN
-		Member m = new Member(info[0], info[1], info[2], info[3], PIN); // Create
-																		// member
+		Member m = new Member(info[0], info[1], info[2], info[3], PIN); // Create member
 		if (members.put(PIN, m) != null) { // Check if full
-			saveMembers();saveAvailablePIN();
 			return PIN;
 		}
 		return null;
 	}
 
+	@Override
 	public int getBicyclesInGarage() {
 		int counter = 0;
 		for (Entry<String, Bicycle> e : bicycles.entrySet()) {
@@ -307,14 +284,9 @@ public class Database implements DatabaseInterface {
 		}
 		return counter;
 	}
-
-	public Statistics getStats() {
+	
+	//Testing
+	public Statistics getStats(){
 		return stats;
-	}
-	public LimitedHashMap<String, Member> getMembers(){
-		return members;
-	}
-	public LimitedHashMap<String, Bicycle> getBicycles(){
-		return bicycles;
 	}
 }

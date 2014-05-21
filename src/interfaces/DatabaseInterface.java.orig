@@ -13,8 +13,12 @@ public interface DatabaseInterface {
 	public LinkedList<Member> findMembersByName(String name);
 	
 	public boolean removeMember(String PIDNbr);
-
+<<<<<<< HEAD
+=======
+	
 	public boolean suspendMember (String PIDNbr);
+>>>>>>> 4301d741d4371b327fdf292b8e9ec86062c84890
+
 	public boolean addBicycle(Member m, BarcodePrinter p);
 
 	public Bicycle getBicycle(String barcode);

@@ -16,6 +16,13 @@ import testdrivers.ElectronicLockTestDriver;
 import testdrivers.PinCodeTerminalTestDriver;
 
 public class Main {
+	private final String[] FILE_NAMES = {
+			"members.bg",
+			"bicycles.bg",
+			"availablePIN.bg",
+			"availableBar.bg"
+	};
+			
 	private Database db;
 	private GarageManager manager;
     private ElectronicLock entryLock;
@@ -26,12 +33,12 @@ public class Main {
     private BarcodeReader readerExit;
     
 	public Main() {
-		File m = new File("db\\members.bg");
-		File b = new File("db\\bicycles.bg");
-		File p = new File("db\\availablePIN.bg");
-		File c = new File("db\\availableBar.bg");
+		File m = new File("db\\" + FILE_NAMES[0]);
+		File b = new File("db\\" + FILE_NAMES[1]);
+		File p = new File("db\\" + FILE_NAMES[2]);
+		File c = new File("db\\" + FILE_NAMES[3]);
 		if (m.exists() && b.exists() && p.exists() && c.exists()) {
-			db = new Database("members.bg", "bicycles.bg", "availablePIN.bg", "availableBar.bg");
+			db = new Database(FILE_NAMES[0], FILE_NAMES[1], FILE_NAMES[2], FILE_NAMES[3]);
 		} else {
 			db = new Database(100000, 100000);
 		}
