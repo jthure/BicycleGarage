@@ -470,11 +470,12 @@ public class GUI {
 	@SuppressWarnings("deprecation")
 	private void getStats(String from, String to) throws ParseException {
 		String[] columnNames = {"Members", "Bicycles", "Bicycles parked", "Members checked in"};
-		String[] f = from.split("-");
-		String[] t = to.split("-");
-		Date fDate=new Date(Integer.parseInt(f[0]), Integer.parseInt(f[1]), Integer.parseInt(f[2]));
-		Date tDate=new Date(Integer.parseInt(t[0]), Integer.parseInt(t[1]), Integer.parseInt(t[2]));
-		Integer[][] data = stats.getInfo(fDate, tDate);
+//		String[] f = from.split("-");
+//		String[] t = to.split("-");
+//		Date fDate=new Date(Integer.parseInt(f[0]), Integer.parseInt(f[1]), Integer.parseInt(f[2]));
+//		Date tDate=new Date(Integer.parseInt(t[0]), Integer.parseInt(t[1]), Integer.parseInt(t[2]));
+//		Integer[][] data = stats.getInfo(fDate, tDate);
+		Integer[][] data = stats.getInfo(new Date(), new Date());
 		table = new JTable(data, columnNames);
 	}
 	

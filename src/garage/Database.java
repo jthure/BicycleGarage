@@ -22,6 +22,7 @@ public class Database implements DatabaseInterface {
 	private LinkedList<String> availablePIN, availableBar;
 	private ArrayList<DayEvent> dayEvents;
 	private Date creationDate;
+	private Statistics stats;
 
 	public Database(int maxBikes, int maxMembers) {
 		members = new LimitedHashMap<String, Member>(maxMembers);
@@ -31,7 +32,9 @@ public class Database implements DatabaseInterface {
 		generateCodes(availablePIN, 6);
 		generateCodes(availableBar, 5);
 		dayEvents = new ArrayList<DayEvent>();
+		dayEvents.add(new DayEvent());
 		creationDate = new Date();
+		stats = new Statistics(this);
 	}
 	
 	public Database(String members, String bicycles, String availablePIN, String availableBar) {
@@ -50,6 +53,8 @@ public class Database implements DatabaseInterface {
 		String PIN = availablePIN.pop(); // Get new PIN
 		Member m = new Member(fName, lName, PIDNbr, telNbr, PIN); // Create member
 		if (members.put(PIN, m) != null) { // Check if full
+			stats.memberChange();
+//			stats.memberChange(1);
 			return true;
 		}
 		return false;
@@ -79,6 +84,7 @@ public class Database implements DatabaseInterface {
 		if (m.addBicycle(barcode)) { // Check if member is full
 			if (bicycles.put(barcode, b) != null) { // Check if db full
 				p.printBarcode(barcode);
+				stats.bicycleChange();
 				return true;
 			}
 			m.removeBicycle(barcode); //Remove inserted barcode if db was full
@@ -277,5 +283,10 @@ public class Database implements DatabaseInterface {
 				counter++;
 		}
 		return counter;
+	}
+	
+	//Testing
+	public Statistics getStats(){
+		return stats;
 	}
 }

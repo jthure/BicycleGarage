@@ -16,7 +16,7 @@ public class DayEvent {
 	public DayEvent(){
 		this(new Date());
 	}
-	public Date getDate(){
+	public Date getDay(){
 		return day;
 	}
 	public int getMembers() {
@@ -37,11 +37,17 @@ public class DayEvent {
 	public void incrementMembersCheckedIn() {
 		this.membersCheckedIn++;
 	}
+	public void setMembersCheckedIn(int i){
+		this.membersCheckedIn=i;
+	}
 	public int getBicyclesInGarage() {
 		return bicyclesInGarage;
 	}
 	public void setBicyclesInGarage(int bicyclesInGarage) {
 		this.bicyclesInGarage = bicyclesInGarage;
+	}
+	public void setDay(Date day) {
+		this.day = day;
 	}
 	
 	

@@ -18,6 +18,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -192,6 +193,10 @@ public class GUI {
 
 		// Tab 3: Statistics
 		JPanel tab3Wrapper = new JPanel();
+		String[] columnNames = {"Bicycles","Members","CheckIns","Bikes"};
+		Integer[][] data = new Integer[2][4];
+		JTable table = new JTable(data,columnNames);
+		tab3Wrapper.add(table);
 
 		// Add tabs
 		tabbedPane.addTab("Add User", tab1Wrapper);

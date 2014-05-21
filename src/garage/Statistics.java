@@ -1,10 +1,12 @@
 package garage;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import entities.DayEvent;
 
 public class Statistics {
+	private static final long day = 86400000;
 	Database db;
 
 	public Statistics(Database db) {
@@ -12,14 +14,35 @@ public class Statistics {
 	}
 
 	private int computeIndex(Date date) {
+		if (date.compareTo(new Date())>0){
+			date = new Date();
+		}
 		long ms = date.getTime() - db.creationDate().getTime();
-		long divide = 86400000;
-		return (int) (ms / divide);
+		int index = (int) (ms / day);
+//		ArrayList<DayEvent> des= db.getDayEvents();
+//		while(index>=des.size()){
+//			DayEvent de = des.get(des.size()-1);
+//			de.setDay(new Date(de.getDay().getTime()+divide));
+//			de.setMembersCheckedIn(0);
+//			des.add(de);
+//		}
+		return index;
+	}
+	private void checkLength(){
+		int index = computeIndex(new Date());
+		ArrayList<DayEvent> des= db.getDayEvents();
+		while(index>=des.size()){
+			DayEvent de = des.get(des.size()-1);
+			de.setDay(new Date(de.getDay().getTime()+day));
+			de.setMembersCheckedIn(0);
+			des.add(de);
+		}
 	}
 
 	private DayEvent newDayEvent() {
+		checkLength();
 		DayEvent newDayEvent = new DayEvent();
-		db.getDayEvents().set(computeIndex(newDayEvent.getDate()), newDayEvent);
+		db.getDayEvents().set(computeIndex(newDayEvent.getDay()), newDayEvent);
 		memberChange();
 		bicycleChange();
 		bicyclesInGarageChange();
@@ -27,6 +50,7 @@ public class Statistics {
 	}
 
 	public void memberChange() {
+		checkLength();
 		int index = computeIndex(new Date());
 		DayEvent dayEvent = db.getDayEvents().get(index);
 		if (dayEvent != null) {
@@ -35,8 +59,21 @@ public class Statistics {
 			newDayEvent();
 		}
 	}
+	//Test start
+	public void memberChange(int days) {
+		checkLength();
+		int index = computeIndex(new Date(new Date().getTime()+ (long)86400000* (long) days));
+		DayEvent dayEvent = db.getDayEvents().get(index);
+		if (dayEvent != null) {
+			dayEvent.setMembers(db.getMemberSize());
+		} else {
+			newDayEvent();
+		}
+	}
+	//Test end
 
 	public void bicycleChange() {
+		checkLength();
 		int index = computeIndex(new Date());
 		DayEvent dayEvent = db.getDayEvents().get(index);
 		if (dayEvent != null) {
@@ -47,6 +84,7 @@ public class Statistics {
 	}
 
 	public void bicyclesInGarageChange() {
+		checkLength();
 		int index = computeIndex(new Date());
 		DayEvent dayEvent = db.getDayEvents().get(index);
 		if (dayEvent != null) {
@@ -57,6 +95,7 @@ public class Statistics {
 	}
 
 	public void userCheckInChange() {
+		checkLength();
 		int index = computeIndex(new Date());
 		DayEvent dayEvent = db.getDayEvents().get(index);
 		if (dayEvent != null) {
@@ -67,6 +106,7 @@ public class Statistics {
 		}
 	}
 	public Integer[][] getInfo(Date startDate, Date endDate){
+		checkLength();
 		int startIndex = computeIndex(startDate);
 		int endIndex = computeIndex(endDate);
 		int size = endIndex-startIndex+1;
