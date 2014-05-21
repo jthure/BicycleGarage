@@ -1,9 +1,12 @@
 package entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Member {
+public class Member implements Serializable {
+
+	
 	public final static int MAX_BICYCLES = 2;
 	public final static long CHECK_IN_TIME = 600000;	// represented in milliseconds
 	

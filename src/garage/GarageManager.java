@@ -40,7 +40,7 @@ public class GarageManager implements BicycleGarageManager {
 
 	public void entryBarcode(String bicycleID) {
 		// Check if garage is full.
-		if (!db.isFull()) {
+		if (!(db.getMemberSize()>=db.getMaxMemberSize())) {
 			Bicycle bicycle = db.getBicycle(bicycleID);
 			// Check if barcode is valid.
 			if (bicycle != null) {

@@ -19,13 +19,6 @@ public class Statistics {
 		}
 		long ms = date.getTime() - db.creationDate().getTime();
 		int index = (int) (ms / day);
-//		ArrayList<DayEvent> des= db.getDayEvents();
-//		while(index>=des.size()){
-//			DayEvent de = des.get(des.size()-1);
-//			de.setDay(new Date(de.getDay().getTime()+divide));
-//			de.setMembersCheckedIn(0);
-//			des.add(de);
-//		}
 		return index;
 	}
 	private void checkLength(){
@@ -50,7 +43,7 @@ public class Statistics {
 	}
 
 	public void memberChange() {
-		checkLength();
+//		checkLength();
 		int index = computeIndex(new Date());
 		DayEvent dayEvent = db.getDayEvents().get(index);
 		if (dayEvent != null) {
