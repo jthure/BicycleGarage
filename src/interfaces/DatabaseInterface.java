@@ -28,4 +28,7 @@ public interface DatabaseInterface {
 	public boolean isFull();
 	
 	public boolean setMaxParkingslots();
+	public int getBicyclesInGarage();
+	public int getBicyclesSize();
+	public int getMembersSize();
 }
