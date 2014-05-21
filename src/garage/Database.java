@@ -198,6 +198,10 @@ public class Database implements DatabaseInterface {
 		writeToFile(this.availablePIN, "availablePIN.bg");
 		saveStats();
 	}
+	public void saveStats(){
+		writeToFile(this.availablePIN, "availablePIN.bg");
+		saveStats();
+	}
 
 	public boolean removeMember(String PIN) {
 		Member m = members.remove(PIN);
