@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.sql.Savepoint;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -61,7 +62,7 @@ public class Database implements DatabaseInterface {
 																	// member
 		if (members.put(PIN, m) != null) { // Check if full
 			stats.memberChange();
-			saveMembers(); saveAvailableBar();
+			saveMembers(); saveAvailableBar(); saveStats();
 			return true;
 		}
 		return false;
@@ -92,7 +93,7 @@ public class Database implements DatabaseInterface {
 			if (bicycles.put(barcode, b) != null) { // Check if db full
 				p.printBarcode(barcode);
 				stats.bicycleChange();
-				saveBicycles(); saveAvailableBar();
+				saveBicycles(); saveAvailableBar(); saveStats();
 				return true;
 			}
 			m.removeBicycle(barcode); // Remove inserted barcode if db was full
@@ -117,6 +118,7 @@ public class Database implements DatabaseInterface {
 			bicycles.put(b.getBarcode(), b); // Put back in
 		}
 		availablePIN.add(oldPIN); // Put back old PIN
+		saveMembers(); saveAvailablePIN();
 		return newPIN;
 	}
 
@@ -184,23 +186,18 @@ public class Database implements DatabaseInterface {
 	}
 	public void saveMembers(){
 		writeToFile(this.members, "members.bg");
-		saveStats();
 	}
 	public void saveBicycles(){
 		writeToFile(this.bicycles, "bicycles.bg");
-		saveStats();
 	}
 	public void saveAvailableBar(){
 		writeToFile(this.availableBar, "availableBar.bg");
-		saveStats();
 	}
 	public void saveAvailablePIN(){
 		writeToFile(this.availablePIN, "availablePIN.bg");
-		saveStats();
 	}
 	public void saveStats(){
-		writeToFile(this.availablePIN, "availablePIN.bg");
-		saveStats();
+		writeToFile(this.dayEvents, "stats.bg");
 	}
 
 	public boolean removeMember(String PIN) {
@@ -212,7 +209,7 @@ public class Database implements DatabaseInterface {
 			}
 			stats.memberChange();
 			stats.bicycleChange();
-			saveMembers(); saveAvailableBar(); saveBicycles(); saveAvailablePIN();
+			saveMembers(); saveAvailableBar(); saveBicycles(); saveAvailablePIN(); saveStats();
 			return true;
 		}
 		return false;
@@ -227,7 +224,7 @@ public class Database implements DatabaseInterface {
 			// detta?
 			availableBar.add(barcode);
 			stats.bicycleChange();
-			saveBicycles();saveAvailableBar();
+			saveBicycles();saveAvailableBar(); saveStats();
 			return true;
 		}
 		return false;
@@ -297,7 +294,9 @@ public class Database implements DatabaseInterface {
 		Member m = new Member(info[0], info[1], info[2], info[3], PIN); // Create
 																		// member
 		if (members.put(PIN, m) != null) { // Check if full
-			saveMembers();saveAvailablePIN();
+			saveMembers();
+			saveAvailablePIN(); 
+			saveStats();
 			return PIN;
 		}
 		return null;

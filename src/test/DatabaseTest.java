@@ -95,8 +95,8 @@ public class DatabaseTest {
 		assertEquals(2, db.getBicycleSize());
 
 		db.removeMember(p2);
-//		assertEquals(1, db.getMemberSize());
-//		assertEquals(1, db.getBicycleSize());
+		// assertEquals(1, db.getMemberSize());
+		// assertEquals(1, db.getBicycleSize());
 		db = null;
 		db = new Database("members.bg", "bicycles.bg", "availablePIN.bg",
 				"availableBar.bg", "stats.bg");
