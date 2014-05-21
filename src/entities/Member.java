@@ -17,6 +17,7 @@ public class Member {
 		this.PIDNbr = PIDNbr;
 		this.telNbr = telNbr;
 		suspExpDate = new Date();
+		checkedIn = new Date(0);
 		this.PINCode = PINCode;
 		bicycles = new ArrayList<String>(MAX_BICYCLES);
 	}

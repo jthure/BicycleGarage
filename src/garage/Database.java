@@ -32,7 +32,7 @@ public class Database implements DatabaseInterface {
 		Random r = new Random();
 		String leadingZeroes = "%0" + digits + "d";
 
-		for (int i = 0; i < digits; i++) {
+		for (int i = 0; i < Math.pow(10, digits); i++) {
 			list.add(String.format(leadingZeroes, i));
 		}
 		Collections.shuffle(list);
