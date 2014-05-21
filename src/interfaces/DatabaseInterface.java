@@ -9,11 +9,12 @@ public interface DatabaseInterface {
 	public boolean addMember(String fName, String lName, String PIDNbr, String telNbr);
 
 	public Member getMember(String PIDNbr);
-	public LinkedList<Member> getUsersWithNameRegex(String name);
+	
+	public LinkedList<Member> findMembersByName(String name);
 	
 	public boolean removeMember(String PIDNbr);
 	
-//	public boolean suspendMember (String PIDNbr);
+	public boolean suspendMember (String PIDNbr);
 
 	public boolean addBicycle(Member m, BarcodePrinter p);
 
@@ -28,7 +29,10 @@ public interface DatabaseInterface {
 	public boolean isFull();
 	
 	public boolean setMaxParkingslots();
+	
 	public int getBicyclesInGarage();
+	
 	public int getBicycleSize();
+	
 	public int getMemberSize();
 }

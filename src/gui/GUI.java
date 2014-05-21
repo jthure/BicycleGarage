@@ -9,7 +9,6 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.LinkedList;
 
-import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -21,7 +20,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.text.JTextComponent;
 
 import entities.*;
@@ -253,7 +251,7 @@ public class GUI {
 
 	public void searchUser() {
 		LinkedList<Member> matchedUsers = db
-				.getUsersWithNameRegex(tab2UserSearchField.getText());
+				.findMembersByName(tab2UserSearchField.getText());
 		tab2UserSearchField.setText(null);
 		userListModel.clear();
 		for (Member u : matchedUsers) {

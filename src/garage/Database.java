@@ -64,18 +64,18 @@ public class Database implements DatabaseInterface {
 		return members.get(PIN);
 	}
 
-	public LinkedList<Member> getUsersWithNameRegex(String name) {
-		LinkedList<Member> matchedUsers = new LinkedList<>();
+	public LinkedList<Member> findMembersByName(String name) {
+		LinkedList<Member> matchedMembers = new LinkedList<>();
 		Set<Entry<String, Member>> set = members.entrySet();
 		for (Entry<String, Member> e : set) {
 			Member member = e.getValue();
 			String regexName = "(?i)" + name + ".*";
 			if (member.getInfo()[0].matches(regexName)
 					|| member.getInfo()[1].matches(regexName)) {
-				matchedUsers.add(member);
+				matchedMembers.add(member);
 			}
 		}
-		return matchedUsers;
+		return matchedMembers;
 	}
 
 	public boolean addBicycle(Member m, BarcodePrinter p) {
@@ -185,8 +185,8 @@ public class Database implements DatabaseInterface {
 	}
 
 	public boolean removeMember(String PIN) {
-		Member m = members.get(PIN);
-		if (members.remove(PIN) != null) {
+		Member m = members.remove(PIN);
+		if (m != null) {
 			availablePIN.add(PIN);
 			for (String b : m.getBicycles()) {	// Remove members bicycles
 				bicycles.remove(b);
@@ -199,9 +199,9 @@ public class Database implements DatabaseInterface {
 	public boolean removeBicycle(String barcode) {
 		Bicycle b = bicycles.remove(barcode);	// Remove bicycle
 		if (b != null) {
-			Member m = members.get(b.getOwnerPIN());	// Find owner
-			m.removeBicycle(barcode);	// Remove bicycle from member
-			members.put(m.getPIN(), m);	// Put member back into map
+			members.get(b.getOwnerPIN()).removeBicycle(barcode);	// Find owner
+//			m.removeBicycle(barcode);	// Remove bicycle from member
+//			members.put(m.getPIN(), m);	// Put member back into map
 			availableBar.add(barcode);
 			return true;
 		}
@@ -254,6 +254,11 @@ public class Database implements DatabaseInterface {
 	public ArrayList<DayEvent> getDayEvents() {
 		return dayEvents;
 	}
+
+	public boolean suspendMember(String PIDNbr) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 	/**
 	 * Test methods
@@ -275,7 +280,6 @@ public class Database implements DatabaseInterface {
 		return null;
 	}
 
-	@Override
 	public int getBicyclesInGarage() {
 		int counter = 0;
 		for (Entry<String, Bicycle> e : bicycles.entrySet()) {
@@ -285,7 +289,6 @@ public class Database implements DatabaseInterface {
 		return counter;
 	}
 	
-	//Testing
 	public Statistics getStats(){
 		return stats;
 	}
