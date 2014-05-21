@@ -107,37 +107,24 @@ public class Database implements DatabaseInterface {
 	}
 
 	public String changePIN(String oldPIN) {
-<<<<<<< HEAD
+
 		if (members.containsKey(oldPIN)) {
-			Member m = members.get(oldPIN);		// Get member	
-			members.remove(oldPIN);				// Remove old entry
-			String newPIN = availablePIN.pop();	// Get new PIN
-			m.setPIN(newPIN);					// Change PIN
-			members.put(newPIN, m);				// Put in new entry
+			Member m = members.get(oldPIN); // Get member
+			members.remove(oldPIN); // Remove old entry
+			String newPIN = availablePIN.pop(); // Get new PIN
+			m.setPIN(newPIN); // Change PIN
+			members.put(newPIN, m); // Put in new entry
 			for (String s : m.getBicycles()) {
-				Bicycle b = bicycles.get(s);		// Get bicycle
-				b.setOwnerPIN(newPIN);				// Change PIN
-				bicycles.put(b.getBarcode(), b);	// Put back in
+				Bicycle b = bicycles.get(s); // Get bicycle
+				b.setOwnerPIN(newPIN); // Change PIN
+				bicycles.put(b.getBarcode(), b); // Put back in
 			}
-			availablePIN.add(oldPIN);		// Put back old PIN
+			availablePIN.add(oldPIN); // Put back old PIN
+			saveMembers(); saveAvailablePIN();
 			return newPIN;
 		}
 		return null;
-=======
-		Member m = members.get(oldPIN); // Get member
-		members.remove(oldPIN); // Remove old entry
-		String newPIN = availablePIN.pop(); // Get new PIN
-		m.setPIN(newPIN); // Change PIN
-		members.put(newPIN, m); // Put in new entry
-		for (String s : m.getBicycles()) {
-			Bicycle b = bicycles.get(s); // Get bicycle
-			b.setOwnerPIN(newPIN); // Change PIN
-			bicycles.put(b.getBarcode(), b); // Put back in
-		}
-		availablePIN.add(oldPIN); // Put back old PIN
-		saveMembers(); saveAvailablePIN();
-		return newPIN;
->>>>>>> 724125b4b33aa2adb1884afd76443cc79c8faa2d
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -325,24 +312,28 @@ public class Database implements DatabaseInterface {
 		}
 		return counter;
 	}
-
-	public Statistics getStats() {
-		return stats;
+	public boolean suspendMember(String PIDNbr) {
+		// TODO Auto-generated method stub
+		return false;
 	}
-<<<<<<< HEAD
-
 	public boolean unsuspendMember(String PIN) {
 		if (members.containsKey(PIN)) {
 			members.get(PIN).unsuspend();
 			return true;
 		}
 		return false;
-=======
+	}
+
+	public Statistics getStats() {
+		return stats;
+	}
+
 	public LimitedHashMap<String, Member> getMembers(){
 		return members;
 	}
 	public LimitedHashMap<String, Bicycle> getBicycles(){
 		return bicycles;
->>>>>>> 724125b4b33aa2adb1884afd76443cc79c8faa2d
+
 	}
+
 }
