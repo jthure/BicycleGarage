@@ -13,12 +13,15 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import entities.Bicycle;
+import entities.DayEvent;
 import entities.Member;
 
 public class Database implements DatabaseInterface {
 	private LimitedHashMap<String, Member> members; // Key = PIN
 	private LimitedHashMap<String, Bicycle> bicycles; // Key = Bar code
 	private LinkedList<String> availablePIN, availableBar;
+	private ArrayList<DayEvent> dayEvents;
+	private Date creationDate;
 
 	public Database(int maxBikes, int maxMembers) {
 		members = new LimitedHashMap<String, Member>(maxMembers);
@@ -27,6 +30,8 @@ public class Database implements DatabaseInterface {
 		availableBar = new LinkedList<String>();
 		generateCodes(availablePIN, 6);
 		generateCodes(availableBar, 5);
+		dayEvents = new ArrayList<DayEvent>();
+		creationDate = new Date();
 	}
 	
 	public Database(String members, String bicycles, String availablePIN, String availableBar) {
@@ -35,10 +40,6 @@ public class Database implements DatabaseInterface {
  
 	private void generateCodes(LinkedList<String> list, int digits) {
 		String leadingZeroes = "%0" + digits + "d";
-<<<<<<< HEAD
-=======
-
->>>>>>> c00fb7a85f5e340ca201f28b798a0612fa46fc08
 		for (int i = 0; i < Math.pow(10, digits); i++) {
 			list.add(String.format(leadingZeroes, i));
 		}
@@ -240,6 +241,14 @@ public class Database implements DatabaseInterface {
 		return bicycles.getMaxCapacity();
 	}
 	
+	public Date creationDate() {
+		return creationDate;
+	}
+	
+	public ArrayList<DayEvent> getDayEvents() {
+		return dayEvents;
+	}
+	
 	/**
 	 * Test methods
 	 */
@@ -258,5 +267,15 @@ public class Database implements DatabaseInterface {
 			return PIN;
 		}
 		return null;
+	}
+
+	@Override
+	public int getBicyclesInGarage() {
+		int counter = 0;
+		for (Entry<String, Bicycle> e : bicycles.entrySet()) {
+			if (e.getValue().isParked())
+				counter++;
+		}
+		return counter;
 	}
 }

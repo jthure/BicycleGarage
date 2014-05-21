@@ -1,31 +1,25 @@
 package garage;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import entities.DayEvent;
 
 public class Statistics {
 	Database db;
-	List<DayEvent> dayEvents;
-	Date startDate;
 
 	public Statistics(Database db) {
 		this.db = db;
-		dayEvents = new ArrayList<>();
-		startDate = new Date();
 	}
 
 	private int computeIndex(Date date) {
-		long ms = date.getTime() - startDate.getTime();
+		long ms = date.getTime() - db.creationDate().getTime();
 		long divide = 86400000;
 		return (int) (ms / divide);
 	}
 
 	private DayEvent newDayEvent() {
 		DayEvent newDayEvent = new DayEvent();
-		dayEvents.set(computeIndex(newDayEvent.getDate()), newDayEvent);
+		db.getDayEvents().set(computeIndex(newDayEvent.getDate()), newDayEvent);
 		memberChange();
 		bicycleChange();
 		bicyclesInGarageChange();
@@ -34,9 +28,9 @@ public class Statistics {
 
 	public void memberChange() {
 		int index = computeIndex(new Date());
-		DayEvent dayEvent = dayEvents.get(index);
+		DayEvent dayEvent = db.getDayEvents().get(index);
 		if (dayEvent != null) {
-			dayEvent.setMembers(db.getMembersSize());
+			dayEvent.setMembers(db.getMemberSize());
 		} else {
 			newDayEvent();
 		}
@@ -44,9 +38,9 @@ public class Statistics {
 
 	public void bicycleChange() {
 		int index = computeIndex(new Date());
-		DayEvent dayEvent = dayEvents.get(index);
+		DayEvent dayEvent = db.getDayEvents().get(index);
 		if (dayEvent != null) {
-			dayEvent.setBicycles(db.getBicyclesSize());
+			dayEvent.setBicycles(db.getBicycleSize());
 		} else {
 			newDayEvent();
 		}
@@ -54,7 +48,7 @@ public class Statistics {
 
 	public void bicyclesInGarageChange() {
 		int index = computeIndex(new Date());
-		DayEvent dayEvent = dayEvents.get(index);
+		DayEvent dayEvent = db.getDayEvents().get(index);
 		if (dayEvent != null) {
 			dayEvent.setBicycles(db.getBicyclesInGarage());
 		} else {
@@ -64,7 +58,7 @@ public class Statistics {
 
 	public void userCheckInChange() {
 		int index = computeIndex(new Date());
-		DayEvent dayEvent = dayEvents.get(index);
+		DayEvent dayEvent = db.getDayEvents().get(index);
 		if (dayEvent != null) {
 			dayEvent.incrementMembersCheckedIn();
 		} else {
@@ -72,13 +66,13 @@ public class Statistics {
 			userCheckInChange();
 		}
 	}
-	public int[][] getInfo(Date startDate, Date endDate){
+	public Integer[][] getInfo(Date startDate, Date endDate){
 		int startIndex = computeIndex(startDate);
 		int endIndex = computeIndex(endDate);
 		int size = endIndex-startIndex+1;
-		int[][] matrix = new int[size][4];
+		Integer[][] matrix = new Integer[size][4];
 		for(int i = startIndex; i<endIndex+1;i++){
-			DayEvent day = dayEvents.get(i);
+			DayEvent day = db.getDayEvents().get(i);
 			matrix[i][0]=day.getMembers();
 			matrix[i][1]=day.getBicycles();
 			matrix[i][2]=day.getMembersCheckedIn();

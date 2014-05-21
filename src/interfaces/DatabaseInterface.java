@@ -29,6 +29,6 @@ public interface DatabaseInterface {
 	
 	public boolean setMaxParkingslots();
 	public int getBicyclesInGarage();
-	public int getBicyclesSize();
-	public int getMembersSize();
+	public int getBicycleSize();
+	public int getMemberSize();
 }

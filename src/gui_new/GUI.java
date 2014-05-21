@@ -3,6 +3,7 @@ package gui_new;
 import entities.Bicycle;
 import entities.Member;
 import garage.Database;
+import garage.Statistics;
 import interfaces.BarcodePrinter;
 
 import javax.swing.JFrame;
@@ -50,6 +51,7 @@ import javax.swing.JTable;
 import java.awt.Font;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -58,7 +60,8 @@ import javax.swing.JSpinner;
 public class GUI {
 	private Database db;
 	private BarcodePrinter printer;
-	private final String dateFormat = "YY-MM-DD";
+	private Statistics stats;
+	private final String dateFormat = "YY-MM-dd";
 
 	public JFrame frmBicycleGarage;
 	private JTextField textField_fName;
@@ -95,6 +98,7 @@ public class GUI {
 	public GUI(Database db, BarcodePrinter printer) {
 		this.db = db;
 		this.printer = printer;
+		stats = new Statistics(db);
 		initialize();
 	}
 
@@ -463,13 +467,15 @@ public class GUI {
 		panel.add(btnStats, "cell 2 5 4 1,growx");
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void getStats(String from, String to) throws ParseException {
 		String[] columnNames = {"Members", "Bicycles", "Bicycles parked", "Members checked in"};
-		DateFormat formatter = new SimpleDateFormat(dateFormat);
-		Date fDate = formatter.parse(from);
-		Date tDate = formatter.parse(to);
-		int[][] data = Statistics.getData(fDate, tDate);
-//		table = new JTable(data, columnNames);
+		String[] f = from.split("-");
+		String[] t = to.split("-");
+		Date fDate=new Date(Integer.parseInt(f[0]), Integer.parseInt(f[1]), Integer.parseInt(f[2]));
+		Date tDate=new Date(Integer.parseInt(t[0]), Integer.parseInt(t[1]), Integer.parseInt(t[2]));
+		Integer[][] data = stats.getInfo(fDate, tDate);
+		table = new JTable(data, columnNames);
 	}
 	
 	private void addMember() {
