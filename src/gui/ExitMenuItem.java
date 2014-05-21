@@ -19,7 +19,7 @@ public class ExitMenuItem extends JMenuItem implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		db.saveDatabase();
+//		db.saveDatabase();
 		System.exit(0);
 		
 	}

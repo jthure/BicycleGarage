@@ -36,10 +36,29 @@ import javax.swing.JPopupMenu;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Canvas;
+
+import javax.swing.JPanel;
+
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+
+import javax.swing.BoxLayout;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+
+import java.awt.Font;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.swing.JSpinner;
 
 public class GUI {
 	private Database db;
 	private BarcodePrinter printer;
+	private final String dateFormat = "YY-MM-DD";
 
 	public JFrame frmBicycleGarage;
 	private JTextField textField_fName;
@@ -66,6 +85,9 @@ public class GUI {
 	private JCheckBox chckbxParked;
 	private JTextField textField_AddOwner;
 	private JComboBox<String> comboBox_Bikes;
+	private JTable table;
+	private JTextField textField;
+	private JTextField textField_1;
 
 	/**
 	 * Create the application.
@@ -323,6 +345,11 @@ public class GUI {
 		textField_Tel.setColumns(10);
 		
 		JButton btnChangeTel = new JButton("Change");
+		btnChangeTel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
 		internalFrame_Members.getContentPane().add(btnChangeTel, "cell 6 3,growx");
 		
 		JLabel lblBicycles = new JLabel("Bicycles");
@@ -394,6 +421,55 @@ public class GUI {
 		
 		JButton btnRefresh = new JButton("Refresh");
 		internalFrame_Monitor.getContentPane().add(btnRefresh, "cell 0 2 4 1,grow");
+		
+		JPanel panel = new JPanel();
+		tabbedPane.addTab("New tab", null, panel, null);
+		panel.setLayout(new MigLayout("", "[grow][grow][][][][]", "[][][][][][][grow]"));
+		
+		JLabel lblData = new JLabel("Data");
+		lblData.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		panel.add(lblData, "cell 0 0,alignx left,aligny center");
+		
+		JLabel lblFormatYymmdd = new JLabel("Format: " + dateFormat);
+		panel.add(lblFormatYymmdd, "cell 2 1 4 1,alignx center");
+		
+		table = new JTable();
+		panel.add(table, "cell 0 2 2 5,grow");
+		
+		JLabel lblFrom = new JLabel("From");
+		panel.add(lblFrom, "cell 2 3,alignx trailing");
+		
+		textField = new JTextField();
+		panel.add(textField, "cell 3 3 3 1,growx");
+		textField.setColumns(10);
+		
+		JLabel lblTo = new JLabel("To");
+		panel.add(lblTo, "cell 2 4,alignx trailing");
+		
+		JButton btnStats = new JButton("Fetch Data");
+		btnStats.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					getStats(textField.getText(), textField_1.getText());
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		textField_1 = new JTextField();
+		panel.add(textField_1, "cell 3 4 3 1,growx");
+		textField_1.setColumns(10);
+		panel.add(btnStats, "cell 2 5 4 1,growx");
+	}
+	
+	private void getStats(String from, String to) throws ParseException {
+		String[] columnNames = {"Members", "Bicycles", "Bicycles parked", "Members checked in"};
+		DateFormat formatter = new SimpleDateFormat(dateFormat);
+		Date fDate = formatter.parse(from);
+		Date tDate = formatter.parse(to);
+//		int[][] data = Statistics.getData(fDate, tDate);
+//		table = new JTable(data, columnNames);
 	}
 	
 	private void addMember() {
@@ -452,6 +528,7 @@ public class GUI {
 	}
 	
 	private void fetchMemberList() {
-		list_Members.setListData(db.getMemberList());
+//		list_Members.setListData(db.getMemberList());
 	}
 }
+

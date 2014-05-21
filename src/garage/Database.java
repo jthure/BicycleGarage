@@ -28,7 +28,11 @@ public class Database implements DatabaseInterface {
 		generateCodes(availablePIN, 6);
 		generateCodes(availableBar, 5);
 	}
-
+	
+	public Database(String members, String bicycles, String availablePIN, String availableBar) {
+		loadDatabase(members, bicycles, availablePIN, availableBar);
+	}
+ 
 	private void generateCodes(LinkedList<String> list, int digits) {
 		String leadingZeroes = "%0" + digits + "d";
 		for (int i = 0; i < Math.pow(10, digits); i++) {
@@ -98,29 +102,29 @@ public class Database implements DatabaseInterface {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void loadDatabase() {
+	public void loadDatabase(String members, String bicycles, String availablePIN, String availableBar) {
 		try {
-			FileInputStream fin = new FileInputStream("db\\members.bg");
+			FileInputStream fin = new FileInputStream("db\\" + members);
 			ObjectInputStream ois = new ObjectInputStream(fin);
-			members = (LimitedHashMap<String, Member>) ois.readObject();
+			this.members = (LimitedHashMap<String, Member>) ois.readObject();
 			ois.close();
 			fin.close();
 
-			fin = new FileInputStream("db\\bicycles.bg");
+			fin = new FileInputStream("db\\" + bicycles);
 			ois = new ObjectInputStream(fin);
-			bicycles = (LimitedHashMap<String, Bicycle>) ois.readObject();
+			this.bicycles = (LimitedHashMap<String, Bicycle>) ois.readObject();
 			ois.close();
 			fin.close();
 
-			fin = new FileInputStream("db\\pin.bg");
+			fin = new FileInputStream("db\\" + availablePIN);
 			ois = new ObjectInputStream(fin);
-			availablePIN = (LinkedList<String>) ois.readObject();
+			this.availablePIN = (LinkedList<String>) ois.readObject();
 			ois.close();
 			fin.close();
 
-			fin = new FileInputStream("db\\bar.bg");
+			fin = new FileInputStream("db\\" + availableBar);
 			ois = new ObjectInputStream(fin);
-			availableBar = (LinkedList<String>) ois.readObject();
+			this.availableBar = (LinkedList<String>) ois.readObject();
 			ois.close();
 			fin.close();
 		} catch (FileNotFoundException e) {
@@ -135,27 +139,27 @@ public class Database implements DatabaseInterface {
 		}
 	}
 
-	public void saveDatabase() {
+	public void saveDatabase(String members, String bicycles, String availablePIN, String availableBar) {
 		try {
-			FileOutputStream fout = new FileOutputStream("db\\members.bg");
+			FileOutputStream fout = new FileOutputStream("db\\" + members);
 			ObjectOutputStream oos = new ObjectOutputStream(fout);
 			oos.writeObject(members);
 			oos.close();
 			fout.close();
 
-			fout = new FileOutputStream("db\\bicycles.bg");
+			fout = new FileOutputStream("db\\" + bicycles);
 			oos = new ObjectOutputStream(fout);
 			oos.writeObject(bicycles);
 			oos.close();
 			fout.close();
 
-			fout = new FileOutputStream("db\\pin.bg");
+			fout = new FileOutputStream("db\\" + availablePIN);
 			oos = new ObjectOutputStream(fout);
 			oos.writeObject(availablePIN);
 			oos.close();
 			fout.close();
 
-			fout = new FileOutputStream("db\\bar.bg");
+			fout = new FileOutputStream("db\\" + availableBar);
 			oos = new ObjectOutputStream(fout);
 			oos.writeObject(availableBar);
 			oos.close();
@@ -193,30 +197,26 @@ public class Database implements DatabaseInterface {
 		return false;
 	}
 	
-	public Member[] getMemberList() {
-		Member[] ms = new Member[members.size()];
-		int i = 0;
-		for (Member m : members.values()) {
-			ms[i] = m;
-			i++;
-		}
-		return ms;
-	}
+//	public Member[] getMemberList() {
+//		Member[] ms = new Member[members.size()];
+//		int i = 0;
+//		for (Member m : members.values()) {
+//			ms[i] = m;
+//			i++;
+//		}
+//		return ms;
+//	}
 
-<<<<<<< HEAD
-	@Override
 	public boolean isFull() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
 	public boolean setMaxParkingslots() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-=======
 	public int getMemberSize() {
 		return members.size();
 	}
@@ -231,5 +231,24 @@ public class Database implements DatabaseInterface {
 	public int getMaxBicycleSize() {
 		return bicycles.getMaxCapacity();
 	}
->>>>>>> bc3aa7329f2f60a1a71109b4682acc2d2ae782a8
+	
+	/**
+	 * Test methods
+	 */
+	public LinkedList<String> getAvailPIN() {
+		return availablePIN;
+	}
+	
+	public LinkedList<String> getAvailBar() {
+		return availableBar;
+	}
+	
+	public String addMember(String[] info) {
+		String PIN = availablePIN.pop(); // Get new PIN
+		Member m = new Member(info[0], info[1], info[2], info[3], PIN); // Create member
+		if (members.put(PIN, m) != null) { // Check if full
+			return PIN;
+		}
+		return null;
+	}
 }

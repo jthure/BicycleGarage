@@ -1,6 +1,10 @@
 package test;
 
 import static org.junit.Assert.*;
+
+import java.util.*;
+
+import entities.Member;
 import garage.Database;
 
 import org.junit.Before;
@@ -8,17 +12,51 @@ import org.junit.Test;
 
 public class DatabaseTest {
 	Database db;
+	int memCap, bikeCap;
+	String[][] members;
 
 	@Before
 	public void setUp() throws Exception {
-		db = new Database(10, 10);
-		db.addMember("Örjan", "Karlsson", "5508273895", "0702239910");
-		db.addMember("Bob", "Bobson", "1201231234", "555180069");
+		memCap = 1000;
+		bikeCap = 2000;
+		db = new Database(memCap, bikeCap);
+		members = new String[][] {
+				{"Örjan", "Karlsson", "5508273895", "0702239910"},
+				{"Bob", "Bobson", "1201231234", "555180069"}
+		};
 	}
 
 	@Test
-	public void test() {
-		assertNotEquals(db.getMemberList(), null);
+	public void testPINCodesSize() {
+		TreeSet<String> set = new TreeSet<String>();
+		LinkedList<String> pins = db.getAvailPIN();
+		for (String s : pins) {
+			set.add(s);
+		}
+		assertEquals("Wrong size", 1000000, pins.size());
+		assertEquals("Duplicate code", pins.size(), set.size());
 	}
-
+	
+	@Test
+	public void testBarCodesSize() {
+		TreeSet<String> set = new TreeSet<String>();
+		LinkedList<String> bars = db.getAvailBar();
+		for (String s : bars) {
+			set.add(s);
+		}
+		assertEquals("Wrong size", 100000, bars.size());
+		assertEquals("Duplicate code", bars.size(), set.size());
+	}
+	
+	@Test
+	public void testAddAndGetMembers() {
+		String p1 = db.addMember(members[0]);
+		String p2 = db.addMember(members[1]);
+		assertEquals("Wrong size", 2, db.getMaxMemberSize());
+		
+		Member m1 = new Member(members[0][0], members[0][1], members[0][2], members[0][3], p1);
+		Member m2 = new Member(members[1][0], members[1][1], members[1][2], members[1][3], p2);
+		assertEquals("Members do not match", m1, db.getMember(p1));
+		assertEquals("Members do not match", m2, db.getMember(p2));
+	}
 }

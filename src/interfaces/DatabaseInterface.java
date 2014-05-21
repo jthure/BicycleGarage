@@ -21,9 +21,9 @@ public interface DatabaseInterface {
 	
 	public boolean removeBicycle(String barcode);
 
-	public void loadDatabase();
+	public void loadDatabase(String members, String bicycles, String availablePIN, String availableBar);
 
-	public void saveDatabase();
+	public void saveDatabase(String members, String bicycles, String availablePIN, String availableBar);
 	
 	public boolean isFull();
 	

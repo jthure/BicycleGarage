@@ -7,6 +7,7 @@ import interfaces.ElectronicLock;
 import interfaces.PinCodeTerminal;
 
 import java.awt.EventQueue;
+import java.io.File;
 
 import testdrivers.BarcodePrinterTestDriver;
 import testdrivers.BarcodeReaderEntryTestDriver;
@@ -25,7 +26,15 @@ public class Main {
     private BarcodeReader readerExit;
     
 	public Main() {
-    	db = new Database(100000, 1000000);
+		File m = new File("db\\members.bg");
+		File b = new File("db\\bicycles.bg");
+		File p = new File("db\\availablePIN.bg");
+		File c = new File("db\\availableBar.bg");
+		if (m.exists() && b.exists() && p.exists() && c.exists()) {
+			db = new Database("members.bg", "bicycles.bg", "availablePIN.bg", "availableBar.bg");
+		} else {
+			db = new Database(100000, 100000);
+		}
     	manager = new GarageManager(db);
         entryLock = new ElectronicLockTestDriver("Entry lock");
         exitLock = new ElectronicLockTestDriver("Exit lock");

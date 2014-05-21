@@ -213,6 +213,7 @@ public class GUI {
 			if (db.addMember(tab1FnameField.getText(),
 					tab1LnameField.getText(), tab1PIDField.getText(),
 					tab1TelField.getText())) {
+				db.saveDatabase("members.test", "bikes.test", "pin.test", "bar.test");
 				System.out.println("User added");
 			}
 		}
@@ -228,7 +229,7 @@ public class GUI {
 	public void addBicycle() {
 		Member selectedUser = (Member) userList.getSelectedValue();
 		if (selectedUser != null) {
-			if (db.addBicycle(selectedUser)) {
+			if (db.addBicycle(selectedUser, printer)) {
 				listBicycles(selectedUser);
 			}
 		}
