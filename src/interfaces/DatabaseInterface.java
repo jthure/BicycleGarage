@@ -15,7 +15,7 @@ public interface DatabaseInterface {
 	
 //	public boolean suspendMember (String PIDNbr);
 
-	public boolean addBicycle(Member m);
+	public boolean addBicycle(Member m, BarcodePrinter p);
 
 	public Bicycle getBicycle(String barcode);
 	

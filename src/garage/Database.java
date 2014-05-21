@@ -1,5 +1,6 @@
 package garage;
 
+import interfaces.BarcodePrinter;
 import interfaces.DatabaseInterface;
 
 import java.io.FileInputStream;
@@ -29,28 +30,24 @@ public class Database implements DatabaseInterface {
 	}
 
 	private void generateCodes(LinkedList<String> list, int digits) {
-		Random r = new Random();
 		String leadingZeroes = "%0" + digits + "d";
-
-		for (int i = 0; i < digits; i++) {
+		for (int i = 0; i < Math.pow(10, digits); i++) {
 			list.add(String.format(leadingZeroes, i));
 		}
 		Collections.shuffle(list);
 	}
 
-	public boolean addMember(String fName, String lName, String PIDNbr,
-			String telNbr) {
+	public boolean addMember(String fName, String lName, String PIDNbr, String telNbr) {
 		String PIN = availablePIN.pop(); // Get new PIN
-		Member m = new Member(fName, lName, PIDNbr, telNbr, PIN); // Create
-																	// member
+		Member m = new Member(fName, lName, PIDNbr, telNbr, PIN); // Create member
 		if (members.put(PIN, m) != null) { // Check if full
 			return true;
 		}
 		return false;
 	}
 
-	public Member getMember(String PIDNbr) {
-		return members.get(PIDNbr);
+	public Member getMember(String PIN) {
+		return members.get(PIN);
 	}
 
 	public LinkedList<Member> getUsersWithNameRegex(String name) {
@@ -67,12 +64,12 @@ public class Database implements DatabaseInterface {
 		return matchedUsers;
 	}
 
-	public boolean addBicycle(Member m) {
+	public boolean addBicycle(Member m, BarcodePrinter p) {
 		String barcode = availableBar.pop(); // Get new bar code
 		Bicycle b = new Bicycle(m.getPIN(), barcode); // Create new bicycle
 		if (m.addBicycle(barcode)) { // Check if member is full
 			if (bicycles.put(barcode, b) != null) { // Check if db full
-			// PRINT BARCODE
+				p.printBarcode(barcode);
 				return true;
 			}
 			m.removeBicycle(barcode); //Remove inserted barcode if db was full
@@ -85,6 +82,21 @@ public class Database implements DatabaseInterface {
 		return bicycles.get(barcode);
 	}
 
+	public String changePIN(String oldPIN) {
+		Member m = members.get(oldPIN);		// Get member	
+		members.remove(oldPIN);				// Remove old entry
+		String newPIN = availablePIN.pop();	// Get new PIN
+		m.setPIN(newPIN);					// Change PIN
+		members.put(newPIN, m);				// Put in new entry
+		for (String s : m.getBicycles()) {
+			Bicycle b = bicycles.get(s);		// Get bicycle
+			b.setOwnerPIN(newPIN);				// Change PIN
+			bicycles.put(b.getBarcode(), b);	// Put back in
+		}
+		availablePIN.add(oldPIN);		// Put back old PIN
+		return newPIN;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void loadDatabase() {
 		try {
@@ -158,23 +170,40 @@ public class Database implements DatabaseInterface {
 	}
 
 	public boolean removeMember(String PIN) {
+		Member m = members.get(PIN);
 		if (members.remove(PIN) != null) {
 			availablePIN.add(PIN);
+			for (String b : m.getBicycles()) {	// Remove members bicycles
+				bicycles.remove(b);
+			}
 			return true;
 		}
 		return false;
 	}
 
 	public boolean removeBicycle(String barcode) {
-		Bicycle b = bicycles.remove(barcode);
+		Bicycle b = bicycles.remove(barcode);	// Remove bicycle
 		if (b != null) {
-			members.get(b.getOwnerPIN()).removeBicycle(barcode);
+			Member m = members.get(b.getOwnerPIN());	// Find owner
+			m.removeBicycle(barcode);	// Remove bicycle from member
+			members.put(m.getPIN(), m);	// Put member back into map
 			availableBar.add(barcode);
 			return true;
 		}
 		return false;
 	}
+	
+	public Member[] getMemberList() {
+		Member[] ms = new Member[members.size()];
+		int i = 0;
+		for (Member m : members.values()) {
+			ms[i] = m;
+			i++;
+		}
+		return ms;
+	}
 
+<<<<<<< HEAD
 	@Override
 	public boolean isFull() {
 		// TODO Auto-generated method stub
@@ -187,4 +216,20 @@ public class Database implements DatabaseInterface {
 		return false;
 	}
 
+=======
+	public int getMemberSize() {
+		return members.size();
+	}
+	public int getBicycleSize() {
+		return bicycles.size();
+	}
+	
+	public int getMaxMemberSize() {
+		return members.getMaxCapacity();
+	}
+	
+	public int getMaxBicycleSize() {
+		return bicycles.getMaxCapacity();
+	}
+>>>>>>> bc3aa7329f2f60a1a71109b4682acc2d2ae782a8
 }
