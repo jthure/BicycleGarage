@@ -21,7 +21,8 @@ public class Main {
 			"bicycles.bg",
 			"availablePIN.bg",
 			"availableBar.bg",
-			"stats.bg"
+			"stats.bg",
+			"slots.bg"
 	};
 			
 	private Database db;
@@ -39,7 +40,8 @@ public class Main {
 		File p = new File("db\\" + FILE_NAMES[2]);
 		File c = new File("db\\" + FILE_NAMES[3]);
 		if (m.exists() && b.exists() && p.exists() && c.exists()) {
-			db = new Database(FILE_NAMES[0], FILE_NAMES[1], FILE_NAMES[2], FILE_NAMES[3], FILE_NAMES[4]);
+			db = new Database(FILE_NAMES[0], FILE_NAMES[1],FILE_NAMES[2],
+					FILE_NAMES[3], FILE_NAMES[4], FILE_NAMES[5]);
 		} else {
 			db = new Database(maxBikes, maxMembers);
 		}

@@ -19,6 +19,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -46,7 +47,7 @@ public class GUI {
 	private Database db;
 	private BarcodePrinter printer;
 	private Statistics stats;
-	private final String DATE_FORMAT = "YYYY-MM-dd";
+	private final String DATE_FORMAT = "YY-MM-DD";
 
 	public JFrame frmBicycleGarage;
 	private JTextField textField_fName;
@@ -65,6 +66,7 @@ public class GUI {
 	private JInternalFrame internalFrame_AddBike;
 	private JInternalFrame internalFrame_Bikes;
 	private JInternalFrame internalFrame_Members;
+	private JInternalFrame internalFrame_Slots;
 	private JList<Member> list_Members;
 	private JCheckBox chckbxSuspended;
 	private JCheckBox chckbxCheckedIn;
@@ -78,6 +80,8 @@ public class GUI {
 	private JTextField textField_FetchBike;
 	private DefaultListModel<Member> memberListModel;
 	private DefaultTableModel statsTableModel;
+	private JTextField textField_inGarage;
+	private JTextField textField_maxCap;
 
 	/**
 	 * Create the application.
@@ -116,8 +120,13 @@ public class GUI {
 
 		mnFile.add(mntmAddMember);
 		
-		JMenuItem mntmExit = new JMenuItem("Exit");
-		mnFile.add(mntmExit);
+		JMenuItem mntmQuit = new JMenuItem("Quit");
+		mntmQuit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				System.exit(0);
+			}
+		});
+		mnFile.add(mntmQuit);
 		
 		JMenu mnEdit = new JMenu("Edit");
 		menuBar.add(mnEdit);
@@ -137,6 +146,14 @@ public class GUI {
 			}
 		});
 		mnEdit.add(mntmBicycles);
+		
+		JMenuItem mntmGarageStatus = new JMenuItem("Garage Status");
+		mntmGarageStatus.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				garageStatus();
+			}
+		});
+		mnEdit.add(mntmGarageStatus);
 		
 		/**
 		 * Tabs
@@ -256,7 +273,7 @@ public class GUI {
 				printer.printBarcode(textField_Barcode.getText());
 			}
 		});
-		internalFrame_Bikes.getContentPane().add(btnNewBarcode, "cell 0 4 4 1,grow");
+		internalFrame_Bikes.getContentPane().add(btnNewBarcode, "cell 0 4 4 1,growx,aligny center");
 		
 		/**
 		 * Internal Frame
@@ -401,6 +418,35 @@ public class GUI {
 		JMenuBar menuBar_1 = new JMenuBar();
 		internalFrame_Members.setJMenuBar(menuBar_1);
 		
+		internalFrame_Slots = new JInternalFrame("Garage Status");
+		internalFrame_Slots.setBounds(240, 207, 229, 118);
+		desktopPane.add(internalFrame_Slots);
+		internalFrame_Slots.getContentPane().setLayout(new MigLayout("", "[][grow]", "[][][]"));
+		
+		JLabel lblBicyclesInGarage = new JLabel("Bicycles in Garage");
+		internalFrame_Slots.getContentPane().add(lblBicyclesInGarage, "cell 0 0,alignx trailing");
+		
+		textField_inGarage = new JTextField();
+		textField_inGarage.setEditable(false);
+		internalFrame_Slots.getContentPane().add(textField_inGarage, "cell 1 0,growx");
+		textField_inGarage.setColumns(10);
+		
+		JLabel lblMaximumCapacity = new JLabel("Maximum Capacity");
+		internalFrame_Slots.getContentPane().add(lblMaximumCapacity, "cell 0 1,alignx trailing");
+		
+		textField_maxCap = new JTextField();
+		internalFrame_Slots.getContentPane().add(textField_maxCap, "cell 1 1,growx");
+		textField_maxCap.setColumns(10);
+		
+		JButton btnChangeMax = new JButton("Change Max");
+		btnChangeMax.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setMaxCap();
+			}
+		});
+		internalFrame_Slots.getContentPane().add(btnChangeMax, "cell 0 2 2 1,growx,aligny center");
+		internalFrame_Slots.setVisible(true);
+		
 		JMenu mnMembersFile = new JMenu("File");
 		menuBar_1.add(mnMembersFile);
 		
@@ -457,7 +503,7 @@ public class GUI {
 		String[] columnNames = {"Members", "Bicycles", "Bicycles parked", "Members checked in"};
 		statsTableModel = new DefaultTableModel(columnNames, 0);
 		table = new JTable(statsTableModel);
-		panel.add(table, "cell 0 2 2 5,grow");
+		panel.add(new JScrollPane(table), "cell 0 2 2 5,grow");
 		
 		JLabel lblFrom = new JLabel("From");
 		panel.add(lblFrom, "cell 2 3,alignx trailing");
@@ -485,7 +531,30 @@ public class GUI {
 		textField_1.setColumns(10);
 		panel.add(btnStats, "cell 2 5 4 1,growx");
 	}
-	
+
+	private void setMaxCap() {
+		String max = textField_maxCap.getText();
+		if (max != null) {
+			if (db.setMaxParkingSlots(Integer.parseInt(max))) {
+				JOptionPane.showMessageDialog(internalFrame_Members,
+						"Capacity successfully changed.",
+						"Success",
+						JOptionPane.PLAIN_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(internalFrame_Members,
+						"Invalid input.",
+						"Error",
+						JOptionPane.PLAIN_MESSAGE);
+			}
+		}
+	}
+
+	private void garageStatus() {
+		textField_inGarage.setText(String.valueOf(db.getBicyclesInGarage()));
+		textField_maxCap.setText(String.valueOf(db.getMaxParkingSlots()));
+		internalFrame_Slots.show();
+	}
+
 	private void suspensionStatus() {
 		Member m = db.getMember(textField_PIN.getText());
 		if (m != null) {
@@ -579,11 +648,11 @@ public class GUI {
 	}
 	
 	private void addMember() {
-		if (db.addMember(textField_fName.getText(),
-				textField_lName.getText(),
-				textField_AddPID.getText(),
-				textField_AddTel.getText())) {
-			if (db.getMemberSize() < db.getMaxMemberSize()) {
+		if (db.getMemberSize() < db.getMaxMemberSize()) {
+			if (db.addMember(textField_fName.getText(),
+					textField_lName.getText(),
+					textField_AddPID.getText(),
+					textField_AddTel.getText())) {
 				JOptionPane.showMessageDialog(internalFrame_AddBike,
 						"Member successfully added.",
 						"Member added",

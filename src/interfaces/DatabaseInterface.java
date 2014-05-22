@@ -12,7 +12,6 @@ public interface DatabaseInterface {
 	public Member getMember(String PIN);
 	
 	public LinkedList<Member> findMembersByName(String name);
-	
 
 	public boolean removeMember(String PIN);
 	
@@ -20,24 +19,21 @@ public interface DatabaseInterface {
 	
 	public boolean unsuspendMember(String PIN);
 
-//	public boolean removeMember(String PIDNbr);
-
-	public boolean suspendMember (String PIDNbr);
 	public boolean addBicycle(Member m, BarcodePrinter p);
 
 	public Bicycle getBicycle(String barcode);
 	
 	public boolean removeBicycle(String barcode);
 
-	public void loadDatabase(String members, String bicycles, String availablePIN, String availableBar, String stats);
+	public void loadDatabase(String members, String bicycles, String availablePIN, String availableBar, String stats, String slots);
 
-//	public void saveDatabase(String members, String bicycles, String availablePIN, String availableBar);
-	
-	public boolean setMaxParkingslots();
+	public boolean setMaxParkingSlots(int newMax);
 	
 	public int getBicyclesInGarage();
 	
 	public int getBicycleSize();
 	
 	public int getMemberSize();
+	
+	public int getMaxParkingSlots();
 }
