@@ -61,7 +61,7 @@ public class Database implements DatabaseInterface {
 																	// member
 		if (members.put(PIN, m) != null) { // Check if full
 			stats.memberChange();
-			saveMembers(); saveAvailableBar(); saveStats();
+			saveMembers(); saveAvailablePIN(); saveStats();
 			return true;
 		}
 		return false;
@@ -319,6 +319,19 @@ public class Database implements DatabaseInterface {
 			return true;
 		}
 		return false;
+	}
+	
+	public void checkInMember(Member m){
+		m.checkIn();
+		stats.userCheckInChange();
+	}
+	public void parkBicycle(Bicycle b){
+		b.park();
+		stats.bicyclesInGarageChange();
+	}
+	public void unParkBicycle(Bicycle b){
+		b.unPark();
+		stats.bicyclesInGarageChange();
 	}
 
 	public Statistics getStats() {

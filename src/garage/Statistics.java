@@ -101,7 +101,9 @@ public class Statistics {
 	public Integer[][] getInfo(Date startDate, Date endDate){
 		checkLength();
 		int startIndex = computeIndex(startDate);
+		startIndex = (startIndex<0) ? 0: startIndex; 
 		int endIndex = computeIndex(endDate);
+		endIndex = (endIndex<0) ? 0: endIndex;
 		int size = endIndex-startIndex+1;
 		Integer[][] matrix = new Integer[size][4];
 		for(int i = startIndex; i<endIndex+1;i++){

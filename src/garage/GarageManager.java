@@ -49,7 +49,7 @@ public class GarageManager implements BicycleGarageManager {
 					terminal.lightLED(PinCodeTerminal.GREEN_LED, 10);
 					entryLock.open(10);
 					ignoreInputTime.setTime(new Date().getTime() + 10000);
-					bicycle.park();
+					db.parkBicycle(bicycle);
 				} else {
 					terminal.lightLED(PinCodeTerminal.RED_LED, 2);
 				}
@@ -65,10 +65,12 @@ public class GarageManager implements BicycleGarageManager {
 		Bicycle bicycle = db.getBicycle(bicycleID);
 		// Check if barcode is valid.
 		if (bicycle != null) {
+			Member member = db.getMember(bicycle.getOwnerPIN());
 			// Check if owner is checked in .
-			if (db.getMember(bicycle.getOwnerPIN()).isCheckedIn()) {
+			if (member.isCheckedIn()) {
 				exitLock.open(10);
-				bicycle.unPark();
+				db.unParkBicycle(bicycle);
+				member.checkOut();
 			}
 		}
 
@@ -100,7 +102,8 @@ public class GarageManager implements BicycleGarageManager {
 							entryLock.open(10);
 							ignoreInputTime
 									.setTime(new Date().getTime() + 10000);
-							member.checkIn();
+							db.checkInMember(member);
+							
 							pinBuilder.setLength(0);
 						} else {
 							terminal.lightLED(PinCodeTerminal.RED_LED, 2);
