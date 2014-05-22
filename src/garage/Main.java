@@ -8,6 +8,7 @@ import interfaces.PinCodeTerminal;
 
 import java.awt.EventQueue;
 import java.io.File;
+import java.util.Date;
 
 import testdrivers.BarcodePrinterTestDriver;
 import testdrivers.BarcodeReaderEntryTestDriver;

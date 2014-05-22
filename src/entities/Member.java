@@ -20,7 +20,7 @@ public class Member implements Serializable {
 		this.PIDNbr = PIDNbr;
 		this.telNbr = telNbr;
 		suspExpDate = new Date();
-		checkedIn = new Date(0);
+		checkedIn = new Date();
 		this.PINCode = PINCode;
 		bicycles = new ArrayList<String>(MAX_BICYCLES);
 		checkedIn = new Date((new Date()).getTime() - CHECK_IN_TIME);	// Initialize check in date so that 

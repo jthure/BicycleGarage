@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.sql.Savepoint;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -129,7 +128,7 @@ public class Database implements DatabaseInterface {
 
 	@SuppressWarnings("unchecked")
 	public void loadDatabase(String members, String bicycles,
-			String availablePIN, String availableBar, String stats) {
+		String availablePIN, String availableBar, String stats) {
 		try {
 			FileInputStream fin = new FileInputStream("db\\" + members);
 			ObjectInputStream ois = new ObjectInputStream(fin);
@@ -154,20 +153,17 @@ public class Database implements DatabaseInterface {
 			this.availableBar = (LinkedList<String>) ois.readObject();
 			ois.close();
 			fin.close();
-			
+
 			fin = new FileInputStream("db\\" + stats);
 			ois = new ObjectInputStream(fin);
 			this.dayEvents = (ArrayList<DayEvent>) ois.readObject();
 			ois.close();
 			fin.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -181,26 +177,30 @@ public class Database implements DatabaseInterface {
 			oout.close();
 			fout.close();
 		} catch (FileNotFoundException e) {
-			System.out.println("The path db/"+fileName+" could not be found");
+			System.out.println("The path db\\" + fileName + " could not be found");
 			e.printStackTrace();
 		} catch (IOException e) {
 			System.out.println("Error while serializing");
 			e.printStackTrace();
 		}
-
 	}
+	
 	public void saveMembers(){
 		writeToFile(this.members, "members.bg");
 	}
+	
 	public void saveBicycles(){
 		writeToFile(this.bicycles, "bicycles.bg");
 	}
+	
 	public void saveAvailableBar(){
 		writeToFile(this.availableBar, "availableBar.bg");
 	}
+	
 	public void saveAvailablePIN(){
 		writeToFile(this.availablePIN, "availablePIN.bg");
 	}
+	
 	public void saveStats(){
 		writeToFile(this.dayEvents, "stats.bg");
 	}
@@ -221,12 +221,9 @@ public class Database implements DatabaseInterface {
 	}
 
 	public boolean removeBicycle(String barcode) {
-		Bicycle b = bicycles.remove(barcode); // Remove bicycle
+		Bicycle b = bicycles.remove(barcode);
 		if (b != null) {
-			members.get(b.getOwnerPIN()).removeBicycle(barcode);	// Find owner
-//			m.removeBicycle(barcode);	// Remove bicycle from member
-//			members.put(m.getPIN(), m);	// Put member back into map
-			// detta?
+			members.get(b.getOwnerPIN()).removeBicycle(barcode);
 			availableBar.add(barcode);
 			stats.bicycleChange();
 			saveBicycles();saveAvailableBar(); saveStats();
@@ -331,9 +328,8 @@ public class Database implements DatabaseInterface {
 	public LimitedHashMap<String, Member> getMembers(){
 		return members;
 	}
+	
 	public LimitedHashMap<String, Bicycle> getBicycles(){
 		return bicycles;
-
 	}
-
 }

@@ -39,8 +39,6 @@ import javax.swing.JTable;
 
 import java.awt.Font;
 import java.text.ParseException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -219,7 +217,7 @@ public class GUI {
 		JButton btnFetchBike = new JButton("Fetch");
 		btnFetchBike.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				FetchBike();
+				fetchBike();
 			}
 		});
 		internalFrame_Bikes.getContentPane().add(btnFetchBike, "cell 3 0");
@@ -247,7 +245,7 @@ public class GUI {
 		JButton btnRemoveBicycle = new JButton("Remove Bicycle");
 		btnRemoveBicycle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				RemoveBike(textField_Barcode.getText());
+				removeBike(textField_Barcode.getText());
 			}
 		});
 		internalFrame_Bikes.getContentPane().add(btnRemoveBicycle, "cell 1 3 3 1,grow");
@@ -325,7 +323,7 @@ public class GUI {
 		JButton btnSearch = new JButton("Search");
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				SearchMember(textField_Search.getText());
+				searchMember(textField_Search.getText());
 			}
 		});
 		internalFrame_Members.getContentPane().add(btnSearch, "cell 6 1,growx");
@@ -387,7 +385,7 @@ public class GUI {
 		JButton btnRemoveBike = new JButton("Remove Bicycle");
 		btnRemoveBike.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				RemoveBike();
+				removeBike(comboBox_Bikes.getItemAt(comboBox_Bikes.getSelectedIndex()));
 			}
 		});
 		internalFrame_Members.getContentPane().add(btnRemoveBike, "cell 5 5,grow");
@@ -409,7 +407,7 @@ public class GUI {
 		JMenuItem mntmRemoveMember = new JMenuItem("Remove Member");
 		mntmRemoveMember.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				RemoveMember();
+				removeMember();
 			}
 		});
 		mnMembersFile.add(mntmRemoveMember);
@@ -421,7 +419,7 @@ public class GUI {
 		mntmSuspend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					SuspendMember();
+					suspendMember();
 				} catch (ParseException e1) {
 					e1.printStackTrace();
 				}
@@ -440,7 +438,7 @@ public class GUI {
 		JMenuItem mntmCheckStatus = new JMenuItem("Check Status");
 		mntmCheckStatus.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				SuspensionStatus();
+				suspensionStatus();
 			}
 		});
 		mnMembersSuspension.add(mntmCheckStatus);
@@ -488,7 +486,7 @@ public class GUI {
 		panel.add(btnStats, "cell 2 5 4 1,growx");
 	}
 	
-	private void SuspensionStatus() {
+	private void suspensionStatus() {
 		Member m = db.getMember(textField_PIN.getText());
 		if (m != null) {
 			if (m.isSuspended()) {
@@ -511,24 +509,27 @@ public class GUI {
 				"Unsuspend member", 
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			db.unsuspendMember(textField_PIN.getText());
+			db.saveMembers();
 		}
 	}
 
-	private void SuspendMember() throws ParseException {
+	private void suspendMember() throws ParseException {
 		String until = JOptionPane.showInputDialog("Suspend until (" + DATE_FORMAT + "):");
 		if (until != null) {
-			SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
-			db.suspendMember(textField_PIN.getText(), format.parse(until));
+			Date date = parseToStupidArbitraryDateFormat(until);
+			db.suspendMember(textField_PIN.getText(), date);
+			db.saveMembers();
 		}
 	}
 
-	private void RemoveMember() {
+	private void removeMember() {
 		if (JOptionPane.showConfirmDialog(internalFrame_Members,
 				"Are you sure you would like to remove this member?",
 				"Remove member", 
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			Member m = db.getMember(textField_PIN.getText());
 			db.removeMember(m.getPIN());
+			db.saveMembers();
 			
 			textField_Name.setText("");
 			textField_PID.setText("");
@@ -541,7 +542,7 @@ public class GUI {
 		}
 	}
 
-	private void FetchBike() {
+	private void fetchBike() {
 		Bicycle b = db.getBicycle(textField_FetchBike.getText());
 		if (b != null) {
 			textField_Barcode.setText(b.getBarcode());
@@ -549,27 +550,18 @@ public class GUI {
 			chckbxParked.setSelected(b.isParked());
 		}
 	}
-
-	private void RemoveBike() {
-		if (JOptionPane.showConfirmDialog(internalFrame_Members,
-				"Are you sure you would like to remove this bicycle?",
-				"Remove bicycle", 
-				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-			String barcode = comboBox_Bikes.getItemAt(comboBox_Bikes.getSelectedIndex());
-			db.removeBicycle(barcode);
-		}
-	}
 	
-	private void RemoveBike(String barcode) {
+	private void removeBike(String barcode) {
 		if (JOptionPane.showConfirmDialog(internalFrame_Members,
 				"Are you sure you would like to remove this bicycle?",
 				"Remove bicycle", 
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			db.removeBicycle(barcode);
+			db.saveBicycles();
 		}
 	}
 
-	private void SearchMember(String name) {
+	private void searchMember(String name) {
 		LinkedList<Member> matched = db.findMembersByName(name);
 		memberListModel.clear();
 		for (Member m : matched) {
@@ -578,9 +570,8 @@ public class GUI {
 	}
 
 	private void getStats(String from, String to) throws ParseException {
-		SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
-		Date fDate = format.parse(from, new ParsePosition(0));
-		Date tDate = format.parse(to, new ParsePosition(0));
+		Date fDate = parseToStupidArbitraryDateFormat(from);
+		Date tDate = parseToStupidArbitraryDateFormat(to);
 		Integer[][] data = stats.getInfo(fDate, tDate);
 		for (Integer[] i : data) {
 			statsTableModel.addRow(i);
@@ -592,14 +583,22 @@ public class GUI {
 				textField_lName.getText(),
 				textField_AddPID.getText(),
 				textField_AddTel.getText())) {
-			JOptionPane.showMessageDialog(internalFrame_AddBike,
-					"Member successfully added.",
-					"Member added",
-					JOptionPane.PLAIN_MESSAGE);
-			textField_fName.setText("");
-			textField_lName.setText("");
-			textField_AddPID.setText("");
-			textField_AddTel.setText("");
+			if (db.getMemberSize() < db.getMaxMemberSize()) {
+				JOptionPane.showMessageDialog(internalFrame_AddBike,
+						"Member successfully added.",
+						"Member added",
+						JOptionPane.PLAIN_MESSAGE);
+				textField_fName.setText("");
+				textField_lName.setText("");
+				textField_AddPID.setText("");
+				textField_AddTel.setText("");
+				db.saveMembers();
+			} else {
+				JOptionPane.showMessageDialog(internalFrame_AddBike,
+						"Member capacity reached.",
+						"Cannot add member",
+						JOptionPane.PLAIN_MESSAGE);
+			}
 		}
 	}
 
@@ -617,20 +616,26 @@ public class GUI {
 					JOptionPane.PLAIN_MESSAGE);
 		} else {
 			db.addBicycle(m, printer);
+			db.saveBicycles();
 			showSelectedMember();
 		}
 	}
 
 	private void addBikeDialog() {
-		textField_AddOwner.setText(textField_Name.getText());
-		textField_OwnerPIN.setText(textField_PIN.getText());
-		internalFrame_AddBike.show();
+		String name = textField_Name.getText();
+		String pin = textField_PIN.getText();
+		if (name != null && pin != null) {
+			textField_AddOwner.setText(name);
+			textField_OwnerPIN.setText(pin);
+			internalFrame_AddBike.show();
+		}
 	}
 
 	private void changePIN() {
 		String PIN = db.changePIN(list_Members.getSelectedValue().getPIN());
 		memberListModel.clear();
 		JOptionPane.showMessageDialog(internalFrame_Members, "New PIN is: " + PIN, "PIN Changed", JOptionPane.PLAIN_MESSAGE);
+		db.saveMembers();
 	}
 
 	private void showSelectedMember() {
@@ -648,6 +653,15 @@ public class GUI {
 			chckbxSuspended.setSelected(selected.isSuspended());
 			chckbxCheckedIn.setSelected(selected.isCheckedIn());
 		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	private Date parseToStupidArbitraryDateFormat(String date) {
+		String[] yymmdd = date.split("-");
+		int year = Integer.parseInt(yymmdd[0]) + 100;
+		int month = Integer.parseInt(yymmdd[1]) - 1;
+		int day = Integer.parseInt(yymmdd[2]);
+		return new Date(year, month, day);
 	}
 }
 
