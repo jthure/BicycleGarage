@@ -25,6 +25,7 @@ public class Database implements DatabaseInterface {
 	private ArrayList<DayEvent> dayEvents;
 	private Date creationDate;
 	private Statistics stats;
+	private Integer maxParkingSlots;
 
 	public Database(int maxBikes, int maxMembers) {
 		members = new LimitedHashMap<String, Member>(maxMembers);
@@ -37,11 +38,12 @@ public class Database implements DatabaseInterface {
 		dayEvents.add(new DayEvent());
 		creationDate = new Date();
 		stats = new Statistics(this);
+		maxParkingSlots = maxBikes;
 	}
 
 	public Database(String members, String bicycles, String availablePIN,
-			String availableBar, String stats) {
-		loadDatabase(members, bicycles, availablePIN, availableBar, stats);
+			String availableBar, String stats, String slots) {
+		loadDatabase(members, bicycles, availablePIN, availableBar, stats, slots);
 		this.stats = new Statistics(this);
 		creationDate = dayEvents.get(0).getDay();
 	}
@@ -57,8 +59,7 @@ public class Database implements DatabaseInterface {
 	public boolean addMember(String fName, String lName, String PIDNbr,
 			String telNbr) {
 		String PIN = availablePIN.pop(); // Get new PIN
-		Member m = new Member(fName, lName, PIDNbr, telNbr, PIN); // Create
-																	// member
+		Member m = new Member(fName, lName, PIDNbr, telNbr, PIN); // Create member
 		if (members.put(PIN, m) != null) { // Check if full
 			stats.memberChange();
 			saveMembers();
@@ -110,7 +111,6 @@ public class Database implements DatabaseInterface {
 	}
 
 	public String changePIN(String oldPIN) {
-
 		if (members.containsKey(oldPIN)) {
 			Member m = members.get(oldPIN); // Get member
 			members.remove(oldPIN); // Remove old entry
@@ -133,7 +133,8 @@ public class Database implements DatabaseInterface {
 
 	@SuppressWarnings("unchecked")
 	public void loadDatabase(String members, String bicycles,
-			String availablePIN, String availableBar, String stats) {
+		String availablePIN, String availableBar, String stats,
+		String slots) {
 		try {
 			FileInputStream fin = new FileInputStream("db\\" + members);
 			ObjectInputStream ois = new ObjectInputStream(fin);
@@ -162,6 +163,12 @@ public class Database implements DatabaseInterface {
 			fin = new FileInputStream("db\\" + stats);
 			ois = new ObjectInputStream(fin);
 			this.dayEvents = (ArrayList<DayEvent>) ois.readObject();
+			ois.close();
+			fin.close();
+			
+			fin = new FileInputStream("db\\" + slots);
+			ois = new ObjectInputStream(fin);
+			this.maxParkingSlots = (Integer) ois.readObject();
 			ois.close();
 			fin.close();
 		} catch (FileNotFoundException e) {
@@ -210,6 +217,10 @@ public class Database implements DatabaseInterface {
 	public void saveStats() {
 		writeToFile(this.dayEvents, "stats.bg");
 	}
+	
+	public void saveMaxParkingSlots() {
+		writeToFile(this.maxParkingSlots, "slots.bg");
+	}
 
 	public boolean removeMember(String PIN) {
 		Member m = members.get(PIN);
@@ -255,9 +266,12 @@ public class Database implements DatabaseInterface {
 		}
 		return false;
 	}
-
-	public boolean setMaxParkingslots() {
-		// TODO Auto-generated method stub
+	
+	public boolean setMaxParkingSlots(int newMax) {
+		if (newMax >= getBicyclesInGarage()) {
+			maxParkingSlots = newMax;
+			return true;
+		}
 		return false;
 	}
 
@@ -334,11 +348,6 @@ public class Database implements DatabaseInterface {
 		return counter;
 	}
 
-	public boolean suspendMember(String PIDNbr) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	public boolean unsuspendMember(String PIN) {
 		if (members.containsKey(PIN)) {
 			members.get(PIN).unsuspend();
@@ -351,8 +360,8 @@ public class Database implements DatabaseInterface {
 		m.checkIn();
 		stats.userCheckInChange();
 	}
-
-	public void parkBicycle(Bicycle b) {
+	
+	public void parkBicycle(Bicycle b){
 		b.park();
 		stats.bicyclesInGarageChange();
 	}
@@ -372,5 +381,18 @@ public class Database implements DatabaseInterface {
 
 	public LimitedHashMap<String, Bicycle> getBicycles() {
 		return bicycles;
+	}
+
+	public int getMaxParkingSlots() {
+		return maxParkingSlots;
+	}
+	
+	public boolean checkForDuplicate(String PID) {
+		for (Entry<String, Member> e : members.entrySet()) {
+			if (e.getValue().getPIDNbr().equals(PID)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
