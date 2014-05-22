@@ -133,12 +133,8 @@ public class Database implements DatabaseInterface {
 
 	@SuppressWarnings("unchecked")
 	public void loadDatabase(String members, String bicycles,
-<<<<<<< HEAD
 		String availablePIN, String availableBar, String stats,
 		String slots) {
-=======
-			String availablePIN, String availableBar, String stats) {
->>>>>>> 0a490a6fc2aeb36fd9be3ff0655228a2bc61fb7b
 		try {
 			FileInputStream fin = new FileInputStream("db\\" + members);
 			ObjectInputStream ois = new ObjectInputStream(fin);
@@ -270,18 +266,12 @@ public class Database implements DatabaseInterface {
 		}
 		return false;
 	}
-<<<<<<< HEAD
 	
 	public boolean setMaxParkingSlots(int newMax) {
 		if (newMax >= getBicyclesInGarage()) {
 			maxParkingSlots = newMax;
 			return true;
 		}
-=======
-
-	public boolean setMaxParkingslots() {
-		// TODO Auto-generated method stub
->>>>>>> 0a490a6fc2aeb36fd9be3ff0655228a2bc61fb7b
 		return false;
 	}
 
@@ -358,14 +348,6 @@ public class Database implements DatabaseInterface {
 		return counter;
 	}
 
-<<<<<<< HEAD
-=======
-	public boolean suspendMember(String PIDNbr) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
->>>>>>> 0a490a6fc2aeb36fd9be3ff0655228a2bc61fb7b
 	public boolean unsuspendMember(String PIN) {
 		if (members.containsKey(PIN)) {
 			members.get(PIN).unsuspend();
@@ -378,23 +360,13 @@ public class Database implements DatabaseInterface {
 		m.checkIn();
 		stats.userCheckInChange();
 	}
-<<<<<<< HEAD
 	
 	public void parkBicycle(Bicycle b){
 		b.park();
 		stats.bicyclesInGarageChange();
 	}
-	
-	public void unParkBicycle(Bicycle b){
-=======
-
-	public void parkBicycle(Bicycle b) {
-		b.park();
-		stats.bicyclesInGarageChange();
-	}
 
 	public void unParkBicycle(Bicycle b) {
->>>>>>> 0a490a6fc2aeb36fd9be3ff0655228a2bc61fb7b
 		b.unPark();
 		stats.bicyclesInGarageChange();
 	}
@@ -413,5 +385,14 @@ public class Database implements DatabaseInterface {
 
 	public int getMaxParkingSlots() {
 		return maxParkingSlots;
+	}
+	
+	public boolean checkForDuplicate(String PID) {
+		for (Entry<String, Member> e : members.entrySet()) {
+			if (e.getValue().getPIDNbr().equals(PID)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

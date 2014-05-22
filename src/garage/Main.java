@@ -39,7 +39,9 @@ public class Main {
 		File b = new File("db\\" + FILE_NAMES[1]);
 		File p = new File("db\\" + FILE_NAMES[2]);
 		File c = new File("db\\" + FILE_NAMES[3]);
-		if (m.exists() && b.exists() && p.exists() && c.exists()) {
+		File s = new File("db\\" + FILE_NAMES[4]);
+		File g = new File("db\\" + FILE_NAMES[5]);
+		if (m.exists() && b.exists() && p.exists() && c.exists() && s.exists() && g.exists()) {
 			db = new Database(FILE_NAMES[0], FILE_NAMES[1],FILE_NAMES[2],
 					FILE_NAMES[3], FILE_NAMES[4], FILE_NAMES[5]);
 		} else {

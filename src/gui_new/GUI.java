@@ -58,12 +58,10 @@ public class GUI {
 	private JTextField textField_PID;
 	private JTextField textField_Tel;
 	private JTextField textField_PIN;
-	private JTextField textField_OwnerPIN;
 	private JTextField textField_Barcode;
 	private JTextField textField_Owner;
 	private JDesktopPane desktopPane;
 	private JInternalFrame internalFrame_AddMember;
-	private JInternalFrame internalFrame_AddBike;
 	private JInternalFrame internalFrame_Bikes;
 	private JInternalFrame internalFrame_Members;
 	private JInternalFrame internalFrame_Slots;
@@ -71,7 +69,6 @@ public class GUI {
 	private JCheckBox chckbxSuspended;
 	private JCheckBox chckbxCheckedIn;
 	private JCheckBox chckbxParked;
-	private JTextField textField_AddOwner;
 	private JComboBox<String> comboBox_Bikes;
 	private JTable table;
 	private JTextField textField;
@@ -276,41 +273,6 @@ public class GUI {
 		internalFrame_Bikes.getContentPane().add(btnNewBarcode, "cell 0 4 4 1,growx,aligny center");
 		
 		/**
-		 * Internal Frame
-		 * Add bicycle
-		 */
-		internalFrame_AddBike = new JInternalFrame("Add New Bicycle");
-		internalFrame_AddBike.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		internalFrame_AddBike.setClosable(true);
-		internalFrame_AddBike.setBounds(10, 207, 220, 118);
-		desktopPane.add(internalFrame_AddBike);
-		internalFrame_AddBike.getContentPane().setLayout(new MigLayout("", "[][grow]", "[][][]"));
-		
-		JLabel lblAddOwner = new JLabel("Owner");
-		internalFrame_AddBike.getContentPane().add(lblAddOwner, "cell 0 0,alignx trailing");
-		
-		textField_AddOwner = new JTextField();
-		textField_AddOwner.setEditable(false);
-		internalFrame_AddBike.getContentPane().add(textField_AddOwner, "cell 1 0,growx");
-		textField_AddOwner.setColumns(10);
-		
-		JLabel lblOwnerPIN = new JLabel("Owner PIN");
-		internalFrame_AddBike.getContentPane().add(lblOwnerPIN, "cell 0 1,alignx trailing");
-		
-		textField_OwnerPIN = new JTextField();
-		textField_OwnerPIN.setEditable(false);
-		internalFrame_AddBike.getContentPane().add(textField_OwnerPIN, "cell 1 1,growx");
-		textField_OwnerPIN.setColumns(10);
-		
-		JButton btnAddNPrint = new JButton("Add & Print Bar Code");
-		btnAddNPrint.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				addBicycle();
-			}
-		});
-		internalFrame_AddBike.getContentPane().add(btnAddNPrint, "cell 0 2 2 1,grow");
-		
-		/**
 		 * Internal frame
 		 * Member list
 		 */
@@ -328,7 +290,6 @@ public class GUI {
 		list_Members.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
 				showSelectedMember();
-				internalFrame_AddBike.hide();
 			}
 		});
 		internalFrame_Members.getContentPane().add(list_Members, "cell 0 0 7 1,grow");
@@ -410,7 +371,7 @@ public class GUI {
 		JButton btnAddBike = new JButton("Add Bicycle");
 		btnAddBike.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				addBikeDialog();
+				addBicycle();
 			}
 		});
 		internalFrame_Members.getContentPane().add(btnAddBike, "cell 6 5,grow");
@@ -419,6 +380,8 @@ public class GUI {
 		internalFrame_Members.setJMenuBar(menuBar_1);
 		
 		internalFrame_Slots = new JInternalFrame("Garage Status");
+		internalFrame_Slots.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		internalFrame_Slots.setClosable(true);
 		internalFrame_Slots.setBounds(240, 207, 229, 118);
 		desktopPane.add(internalFrame_Slots);
 		internalFrame_Slots.getContentPane().setLayout(new MigLayout("", "[][grow]", "[][][]"));
@@ -490,7 +453,7 @@ public class GUI {
 		mnMembersSuspension.add(mntmCheckStatus);
 		
 		JPanel panel = new JPanel();
-		tabbedPane.addTab("New tab", null, panel, null);
+		tabbedPane.addTab("Statistics", null, panel, null);
 		panel.setLayout(new MigLayout("", "[grow][grow][][][][]", "[][][][][][][grow]"));
 		
 		JLabel lblData = new JLabel("Data");
@@ -500,7 +463,7 @@ public class GUI {
 		JLabel lblFormatYymmdd = new JLabel("Format: " + DATE_FORMAT);
 		panel.add(lblFormatYymmdd, "cell 2 1 4 1,alignx center");
 		
-		String[] columnNames = {"Members", "Bicycles", "Bicycles parked", "Members checked in"};
+		String[] columnNames = {"Date", "Members", "Bicycles", "Bicycles parked", "Members checked in"};
 		statsTableModel = new DefaultTableModel(columnNames, 0);
 		table = new JTable(statsTableModel);
 		panel.add(new JScrollPane(table), "cell 0 2 2 5,grow");
@@ -625,8 +588,13 @@ public class GUI {
 				"Are you sure you would like to remove this bicycle?",
 				"Remove bicycle", 
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-			db.removeBicycle(barcode);
-			db.saveBicycles();
+			if (db.removeBicycle(barcode)) {
+				JOptionPane.showMessageDialog(internalFrame_AddMember,
+						"Bicycle was successfully removed from member.",
+						"Bicycle removed",
+						JOptionPane.PLAIN_MESSAGE);
+				db.saveBicycles();
+			}
 		}
 	}
 
@@ -648,55 +616,57 @@ public class GUI {
 	}
 	
 	private void addMember() {
+		String PID = textField_AddPID.getText();
 		if (db.getMemberSize() < db.getMaxMemberSize()) {
-			if (db.addMember(textField_fName.getText(),
-					textField_lName.getText(),
-					textField_AddPID.getText(),
-					textField_AddTel.getText())) {
-				JOptionPane.showMessageDialog(internalFrame_AddBike,
-						"Member successfully added.",
-						"Member added",
-						JOptionPane.PLAIN_MESSAGE);
-				textField_fName.setText("");
-				textField_lName.setText("");
-				textField_AddPID.setText("");
-				textField_AddTel.setText("");
-				db.saveMembers();
+			if (!db.checkForDuplicate(PID)) {
+				if (db.addMember(textField_fName.getText(),
+						textField_lName.getText(),
+						PID,
+						textField_AddTel.getText())) {
+					JOptionPane.showMessageDialog(internalFrame_AddMember,
+							"Member successfully added.",
+							"Member added",
+							JOptionPane.PLAIN_MESSAGE);
+					textField_fName.setText("");
+					textField_lName.setText("");
+					textField_AddPID.setText("");
+					textField_AddTel.setText("");
+					db.saveMembers();
+				} else {
+					JOptionPane.showMessageDialog(internalFrame_AddMember,
+							"Member capacity reached.",
+							"Cannot add member",
+							JOptionPane.PLAIN_MESSAGE);
+				}
 			} else {
-				JOptionPane.showMessageDialog(internalFrame_AddBike,
-						"Member capacity reached.",
-						"Cannot add member",
+				JOptionPane.showMessageDialog(internalFrame_AddMember,
+						"Member already exists.",
+						"Duplicate member",
 						JOptionPane.PLAIN_MESSAGE);
 			}
 		}
 	}
-
+	
 	private void addBicycle() {
-		Member m = db.getMember(textField_OwnerPIN.getText());
-		if (m.getBicycles().size() == 2) {
-			JOptionPane.showMessageDialog(internalFrame_AddBike,
-					"Member already has 2 bicycles.",
-					"Capacity reached",
-					JOptionPane.PLAIN_MESSAGE);
-		} else if (db.getBicycleSize() >= db.getMaxBicycleSize()) {
-			JOptionPane.showMessageDialog(internalFrame_AddBike,
-					"Maximum bicycles in the system has been reached.",
-					"Capacity reached",
-					JOptionPane.PLAIN_MESSAGE);
-		} else {
-			db.addBicycle(m, printer);
-			db.saveBicycles();
-			showSelectedMember();
-		}
-	}
-
-	private void addBikeDialog() {
 		String name = textField_Name.getText();
 		String pin = textField_PIN.getText();
+		Member m = db.getMember(pin);
 		if (name != null && pin != null) {
-			textField_AddOwner.setText(name);
-			textField_OwnerPIN.setText(pin);
-			internalFrame_AddBike.show();
+			if (m.getBicycles().size() == 2) {
+				JOptionPane.showMessageDialog(internalFrame_Members,
+						"Member already has 2 bicycles.",
+						"Capacity reached",
+						JOptionPane.PLAIN_MESSAGE);
+			} else if (db.getBicycleSize() >= db.getMaxBicycleSize()) {
+				JOptionPane.showMessageDialog(internalFrame_Members,
+						"Maximum bicycles in the system has been reached.",
+						"Capacity reached",
+						JOptionPane.PLAIN_MESSAGE);
+			} else {
+				db.addBicycle(m, printer);
+				db.saveBicycles();
+				showSelectedMember();
+			}
 		}
 	}
 
