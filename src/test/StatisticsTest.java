@@ -38,7 +38,7 @@ public class StatisticsTest {
 		db.addMember("fName", "lName", "PIDNbr", "telNbr");
 		LinkedList<Member> members = db.findMembersByName("");
 		db.addBicycle(members.get(0), p);
-		Integer [][] matrix = db.getStats().getInfo(new Date(), new Date(new Date().getTime() + (long)86400000*3));
+		String [][] matrix = db.getStats().getInfo(new Date(), new Date(new Date().getTime() + (long)86400000*3));
 		for (int i = 0;i<matrix.length;i++){
 			for (int j = 0; j<matrix[0].length;j++){
 				System.out.print(String.valueOf(matrix[i][j])+ " ");
