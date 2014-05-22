@@ -37,6 +37,10 @@ public class Member implements Serializable {
 	public void checkIn() {
 		checkedIn = new Date();
 	}
+	public void checkOut() {
+		checkedIn = new Date((new Date()).getTime() - CHECK_IN_TIME);
+	}
+	
 	
 	public boolean addBicycle(String barcode){
 		if (bicycles.size() < 2) {
@@ -45,6 +49,7 @@ public class Member implements Serializable {
 		}
 		return false;
 	}
+	
 	
 	public boolean removeBicycle(String barcode) {
 		return bicycles.remove(barcode);
