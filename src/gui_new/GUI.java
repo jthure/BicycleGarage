@@ -408,7 +408,6 @@ public class GUI {
 			}
 		});
 		internalFrame_Slots.getContentPane().add(btnChangeMax, "cell 0 2 2 1,growx,aligny center");
-		internalFrame_Slots.setVisible(true);
 		
 		JMenu mnMembersFile = new JMenu("File");
 		menuBar_1.add(mnMembersFile);
@@ -541,7 +540,6 @@ public class GUI {
 				"Unsuspend member", 
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			db.unsuspendMember(textField_PIN.getText());
-			db.saveMembers();
 		}
 	}
 
@@ -550,7 +548,6 @@ public class GUI {
 		if (until != null) {
 			Date date = parseToStupidArbitraryDateFormat(until);
 			db.suspendMember(textField_PIN.getText(), date);
-			db.saveMembers();
 		}
 	}
 
@@ -561,8 +558,6 @@ public class GUI {
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			Member m = db.getMember(textField_PIN.getText());
 			db.removeMember(m.getPIN());
-			db.saveMembers();
-			
 			textField_Name.setText("");
 			textField_PID.setText("");
 			textField_PIN.setText("");
@@ -593,7 +588,11 @@ public class GUI {
 						"Bicycle was successfully removed from member.",
 						"Bicycle removed",
 						JOptionPane.PLAIN_MESSAGE);
-				db.saveBicycles();
+			} else if (db.getBicycle(barcode).isParked()) {
+				JOptionPane.showMessageDialog(internalFrame_AddMember,
+						"Bicycle is parked and cannot be removed.",
+						"Cannot remove bicycle",
+						JOptionPane.PLAIN_MESSAGE);
 			}
 		}
 	}
@@ -607,6 +606,9 @@ public class GUI {
 	}
 
 	private void getStats(String from, String to) throws ParseException {
+		for (int r = 0; r < statsTableModel.getRowCount(); r++) {
+			statsTableModel.removeRow(r);
+		}
 		Date fDate = parseToStupidArbitraryDateFormat(from);
 		Date tDate = parseToStupidArbitraryDateFormat(to);
 		String[][] data = stats.getInfo(fDate, tDate);
@@ -618,7 +620,7 @@ public class GUI {
 	private void addMember() {
 		String PID = textField_AddPID.getText();
 		if (db.getMemberSize() < db.getMaxMemberSize()) {
-			if (!db.checkForDuplicate(PID)) {
+			if (!db.checkForDuplicateMember(PID)) {
 				if (db.addMember(textField_fName.getText(),
 						textField_lName.getText(),
 						PID,
@@ -631,7 +633,6 @@ public class GUI {
 					textField_lName.setText("");
 					textField_AddPID.setText("");
 					textField_AddTel.setText("");
-					db.saveMembers();
 				} else {
 					JOptionPane.showMessageDialog(internalFrame_AddMember,
 							"Member capacity reached.",
@@ -664,7 +665,10 @@ public class GUI {
 						JOptionPane.PLAIN_MESSAGE);
 			} else {
 				db.addBicycle(m, printer);
-				db.saveBicycles();
+				JOptionPane.showMessageDialog(internalFrame_Members,
+						"Bicycle successfully added.",
+						"Bicycle added",
+						JOptionPane.PLAIN_MESSAGE);
 				showSelectedMember();
 			}
 		}
@@ -674,7 +678,6 @@ public class GUI {
 		String PIN = db.changePIN(list_Members.getSelectedValue().getPIN());
 		memberListModel.clear();
 		JOptionPane.showMessageDialog(internalFrame_Members, "New PIN is: " + PIN, "PIN Changed", JOptionPane.PLAIN_MESSAGE);
-		db.saveMembers();
 	}
 
 	private void showSelectedMember() {

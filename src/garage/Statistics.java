@@ -116,8 +116,8 @@ public class Statistics {
 		for (int i = startIndex; i < endIndex + 1; i++) {
 			DayEvent day = db.getDayEvents().get(i);
 			cal.setTime(day.getDay());
-			matrix[i][0] = String.valueOf(day.getDay().getYear()) + "-"
-					+ String.valueOf(day.getDay().getMonth()) + "-"
+			matrix[i][0] = String.valueOf(day.getDay().getYear() - 100) + "-"
+					+ String.valueOf(day.getDay().getMonth() + 1) + "-"
 					+ String.valueOf(day.getDay().getDate());
 			matrix[i][1] = String.valueOf(day.getMembers());
 			matrix[i][2] = String.valueOf(day.getBicycles());
