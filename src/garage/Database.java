@@ -61,7 +61,9 @@ public class Database implements DatabaseInterface {
 																	// member
 		if (members.put(PIN, m) != null) { // Check if full
 			stats.memberChange();
-			saveMembers(); saveAvailablePIN(); saveStats();
+			saveMembers();
+			saveAvailablePIN();
+			saveStats();
 			return true;
 		}
 		return false;
@@ -92,7 +94,9 @@ public class Database implements DatabaseInterface {
 			if (bicycles.put(barcode, b) != null) { // Check if db full
 				p.printBarcode(barcode);
 				stats.bicycleChange();
-				saveBicycles(); saveAvailableBar(); saveStats();
+				saveBicycles();
+				saveAvailableBar();
+				saveStats();
 				return true;
 			}
 			m.removeBicycle(barcode); // Remove inserted barcode if db was full
@@ -119,7 +123,8 @@ public class Database implements DatabaseInterface {
 				bicycles.put(b.getBarcode(), b); // Put back in
 			}
 			availablePIN.add(oldPIN); // Put back old PIN
-			saveMembers(); saveAvailablePIN();
+			saveMembers();
+			saveAvailablePIN();
 			return newPIN;
 		}
 		return null;
@@ -128,7 +133,7 @@ public class Database implements DatabaseInterface {
 
 	@SuppressWarnings("unchecked")
 	public void loadDatabase(String members, String bicycles,
-		String availablePIN, String availableBar, String stats) {
+			String availablePIN, String availableBar, String stats) {
 		try {
 			FileInputStream fin = new FileInputStream("db\\" + members);
 			ObjectInputStream ois = new ObjectInputStream(fin);
@@ -177,61 +182,79 @@ public class Database implements DatabaseInterface {
 			oout.close();
 			fout.close();
 		} catch (FileNotFoundException e) {
-			System.out.println("The path db\\" + fileName + " could not be found");
+			System.out.println("The path db\\" + fileName
+					+ " could not be found");
 			e.printStackTrace();
 		} catch (IOException e) {
 			System.out.println("Error while serializing");
 			e.printStackTrace();
 		}
 	}
-	
-	public void saveMembers(){
+
+	public void saveMembers() {
 		writeToFile(this.members, "members.bg");
 	}
-	
-	public void saveBicycles(){
+
+	public void saveBicycles() {
 		writeToFile(this.bicycles, "bicycles.bg");
 	}
-	
-	public void saveAvailableBar(){
+
+	public void saveAvailableBar() {
 		writeToFile(this.availableBar, "availableBar.bg");
 	}
-	
-	public void saveAvailablePIN(){
+
+	public void saveAvailablePIN() {
 		writeToFile(this.availablePIN, "availablePIN.bg");
 	}
-	
-	public void saveStats(){
+
+	public void saveStats() {
 		writeToFile(this.dayEvents, "stats.bg");
 	}
 
 	public boolean removeMember(String PIN) {
-		Member m = members.remove(PIN);
+		Member m = members.get(PIN);
 		if (m != null) {
-			availablePIN.add(PIN);
+			boolean bicyclesInGarage = false;
 			for (String b : m.getBicycles()) { // Remove members bicycles
-				bicycles.remove(b);
+				if (bicycles.get(b).isParked()) {
+					bicyclesInGarage = true;
+				}
 			}
-			stats.memberChange();
-			stats.bicycleChange();
-			saveMembers(); saveAvailableBar(); saveBicycles(); saveAvailablePIN(); saveStats();
-			return true;
+			if (!bicyclesInGarage) {
+				for (String b : m.getBicycles()) {
+					bicycles.remove(b);
+				}
+				members.remove(PIN);
+				availablePIN.add(PIN);
+				stats.memberChange();
+				stats.bicycleChange();
+				saveMembers();
+				saveAvailableBar();
+				saveBicycles();
+				saveAvailablePIN();
+				saveStats();
+				return true;
+			}
 		}
 		return false;
 	}
 
 	public boolean removeBicycle(String barcode) {
-		Bicycle b = bicycles.remove(barcode);
+		Bicycle b = bicycles.get(barcode);
 		if (b != null) {
-			members.get(b.getOwnerPIN()).removeBicycle(barcode);
-			availableBar.add(barcode);
-			stats.bicycleChange();
-			saveBicycles();saveAvailableBar(); saveStats();
-			return true;
+			if (!b.isParked()) {
+				bicycles.remove(barcode);
+				members.get(b.getOwnerPIN()).removeBicycle(barcode);
+				availableBar.add(barcode);
+				stats.bicycleChange();
+				saveBicycles();
+				saveAvailableBar();
+				saveStats();
+				return true;
+			}
 		}
 		return false;
 	}
-	
 
 	public boolean setMaxParkingslots() {
 		// TODO Auto-generated method stub
@@ -273,7 +296,7 @@ public class Database implements DatabaseInterface {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Test methods
 	 */
@@ -291,12 +314,13 @@ public class Database implements DatabaseInterface {
 																		// member
 		if (members.put(PIN, m) != null) { // Check if full
 			saveMembers();
-			saveAvailablePIN(); 
+			saveAvailablePIN();
 			saveStats();
 			return PIN;
 		}
 		return null;
 	}
+
 	/**
 	 * End test methods
 	 */
@@ -309,10 +333,12 @@ public class Database implements DatabaseInterface {
 		}
 		return counter;
 	}
+
 	public boolean suspendMember(String PIDNbr) {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
 	public boolean unsuspendMember(String PIN) {
 		if (members.containsKey(PIN)) {
 			members.get(PIN).unsuspend();
@@ -320,16 +346,18 @@ public class Database implements DatabaseInterface {
 		}
 		return false;
 	}
-	
-	public void checkInMember(Member m){
+
+	public void checkInMember(Member m) {
 		m.checkIn();
 		stats.userCheckInChange();
 	}
-	public void parkBicycle(Bicycle b){
+
+	public void parkBicycle(Bicycle b) {
 		b.park();
 		stats.bicyclesInGarageChange();
 	}
-	public void unParkBicycle(Bicycle b){
+
+	public void unParkBicycle(Bicycle b) {
 		b.unPark();
 		stats.bicyclesInGarageChange();
 	}
@@ -338,11 +366,11 @@ public class Database implements DatabaseInterface {
 		return stats;
 	}
 
-	public LimitedHashMap<String, Member> getMembers(){
+	public LimitedHashMap<String, Member> getMembers() {
 		return members;
 	}
-	
-	public LimitedHashMap<String, Bicycle> getBicycles(){
+
+	public LimitedHashMap<String, Bicycle> getBicycles() {
 		return bicycles;
 	}
 }

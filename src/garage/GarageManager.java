@@ -1,6 +1,7 @@
 package garage;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import entities.*;
 import interfaces.*;
@@ -52,9 +53,11 @@ public class GarageManager implements BicycleGarageManager {
 					db.parkBicycle(bicycle);
 				} else {
 					terminal.lightLED(PinCodeTerminal.RED_LED, 2);
+					
 				}
 			} else {
-				terminal.lightLED(PinCodeTerminal.RED_LED, 2);
+				terminal.lightLED(PinCodeTerminal.RED_LED, 1);
+				terminal.lightLED(PinCodeTerminal.RED_LED, 1);
 			}
 		} else {
 			terminal.lightLED(PinCodeTerminal.RED_LED, 4);
@@ -95,9 +98,8 @@ public class GarageManager implements BicycleGarageManager {
 								bicycleInGarage = true;
 							}
 						}
-						// Check if member is suspended and have bicycle(s) in
-						// garage.
-						if (!member.isSuspended() && bicycleInGarage) {
+
+						if (bicycleInGarage) {
 							terminal.lightLED(PinCodeTerminal.GREEN_LED, 10);
 							entryLock.open(10);
 							ignoreInputTime
