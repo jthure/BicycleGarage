@@ -529,7 +529,7 @@ public class GUI {
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			Member m = db.getMember(textField_PIN.getText());
 			db.removeMember(m.getPIN());
-			db.saveMembers();
+//			db.saveMembers(); Görs i database
 			
 			textField_Name.setText("");
 			textField_PID.setText("");
@@ -557,7 +557,7 @@ public class GUI {
 				"Remove bicycle", 
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			db.removeBicycle(barcode);
-			db.saveBicycles();
+//			db.saveBicycles(); Görs i database
 		}
 	}
 
@@ -592,7 +592,7 @@ public class GUI {
 				textField_lName.setText("");
 				textField_AddPID.setText("");
 				textField_AddTel.setText("");
-				db.saveMembers();
+//				db.saveMembers(); Detta görs i databse.
 			} else {
 				JOptionPane.showMessageDialog(internalFrame_AddBike,
 						"Member capacity reached.",
@@ -616,7 +616,7 @@ public class GUI {
 					JOptionPane.PLAIN_MESSAGE);
 		} else {
 			db.addBicycle(m, printer);
-			db.saveBicycles();
+//			db.saveBicycles(); Detta görs i database.
 			showSelectedMember();
 		}
 	}
