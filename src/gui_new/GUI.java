@@ -641,8 +641,8 @@ public class GUI {
 	private void getStats(String from, String to) throws ParseException {
 		Date fDate = parseToStupidArbitraryDateFormat(from);
 		Date tDate = parseToStupidArbitraryDateFormat(to);
-		Integer[][] data = stats.getInfo(fDate, tDate);
-		for (Integer[] i : data) {
+		String[][] data = stats.getInfo(fDate, tDate);
+		for (String[] i : data) {
 			statsTableModel.addRow(i);
 		}
 	}
