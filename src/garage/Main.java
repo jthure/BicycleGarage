@@ -8,7 +8,6 @@ import interfaces.PinCodeTerminal;
 
 import java.awt.EventQueue;
 import java.io.File;
-import java.util.Date;
 
 import testdrivers.BarcodePrinterTestDriver;
 import testdrivers.BarcodeReaderEntryTestDriver;
@@ -34,7 +33,7 @@ public class Main {
     private BarcodeReader readerEntry;
     private BarcodeReader readerExit;
     
-	public Main() {
+	public Main(int maxBikes, int maxMembers) {
 		File m = new File("db\\" + FILE_NAMES[0]);
 		File b = new File("db\\" + FILE_NAMES[1]);
 		File p = new File("db\\" + FILE_NAMES[2]);
@@ -42,7 +41,7 @@ public class Main {
 		if (m.exists() && b.exists() && p.exists() && c.exists()) {
 			db = new Database(FILE_NAMES[0], FILE_NAMES[1], FILE_NAMES[2], FILE_NAMES[3], FILE_NAMES[4]);
 		} else {
-			db = new Database(100000, 100000);
+			db = new Database(maxBikes, maxMembers);
 		}
     	manager = new GarageManager(db);
         entryLock = new ElectronicLockTestDriver("Entry lock");
@@ -69,7 +68,11 @@ public class Main {
 	}
 	
 	public static void main(String[] args) {
-		new Main();
+		if (args.length >= 2) {
+			new Main(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+		} else {
+			new Main(100000, 100000);
+		}
 	}
 
 }
