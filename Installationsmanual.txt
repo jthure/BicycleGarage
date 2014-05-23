@@ -1,0 +1,2 @@
+Installationsinstruktioner:
+1.  Dubbelklicka på "BicycleGarage.jar"
