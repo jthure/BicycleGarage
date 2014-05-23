@@ -46,7 +46,8 @@ public class GarageManager implements BicycleGarageManager {
 			// Check if barcode is valid.
 			if (bicycle != null) {
 				// Check if owner is suspended.
-				if (!db.getMember(bicycle.getOwnerPIN()).isSuspended()) {
+				Member m =db.getMember(bicycle.getOwnerPIN());
+				if (!m.isSuspended()) {
 					terminal.lightLED(PinCodeTerminal.GREEN_LED, 10);
 					entryLock.open(10);
 					ignoreInputTime.setTime(new Date().getTime() + 10000);
