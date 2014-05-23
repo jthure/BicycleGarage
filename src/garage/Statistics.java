@@ -56,17 +56,17 @@ public class Statistics {
 	}
 
 	// Test start
-	public void memberChange(int days) {
-		checkLength();
-		int index = computeIndex(new Date(new Date().getTime()
-				+ (long) 86400000 * (long) days));
-		DayEvent dayEvent = db.getDayEvents().get(index);
-		if (dayEvent != null) {
-			dayEvent.setMembers(db.getMemberSize());
-		} else {
-			newDayEvent();
-		}
-	}
+//	public void memberChange(int days) {
+//		checkLength();
+//		int index = computeIndex(new Date(new Date().getTime()
+//				+ (long) 86400000 * (long) days));
+//		DayEvent dayEvent = db.getDayEvents().get(index);
+//		if (dayEvent != null) {
+//			dayEvent.setMembers(db.getMemberSize());
+//		} else {
+//			newDayEvent();
+//		}
+//	}
 
 	// Test end
 
@@ -86,9 +86,10 @@ public class Statistics {
 		int index = computeIndex(new Date());
 		DayEvent dayEvent = db.getDayEvents().get(index);
 		if (dayEvent != null) {
-			dayEvent.setBicycles(db.getBicyclesInGarage());
+			dayEvent.setBicyclesInGarage(db.getBicyclesInGarage());
 		} else {
 			newDayEvent();
+			
 		}
 	}
 
@@ -121,8 +122,8 @@ public class Statistics {
 					+ String.valueOf(day.getDay().getDate());
 			matrix[i][1] = String.valueOf(day.getMembers());
 			matrix[i][2] = String.valueOf(day.getBicycles());
-			matrix[i][3] = String.valueOf(day.getMembersCheckedIn());
-			matrix[i][4] = String.valueOf(day.getBicyclesInGarage());
+			matrix[i][3] = String.valueOf(day.getBicyclesInGarage());
+			matrix[i][4] = String.valueOf(day.getMembersCheckedIn());
 		}
 		return matrix;
 	}
