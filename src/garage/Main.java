@@ -1,6 +1,6 @@
 package garage;
 
-import gui_new.GUI;
+import gui.GUI;
 import interfaces.BarcodePrinter;
 import interfaces.BarcodeReader;
 import interfaces.ElectronicLock;
@@ -78,11 +78,7 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-		if (args.length >= 2) {
-			new Main(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
-		} else {
-			new Main(100000, 100000);
-		}
+		new Main(100000, 100000);
 	}
 
 }

@@ -566,44 +566,4 @@ public class Database {
 		}
 		return false;
 	}
-
-	/**
-	 * Test methods
-	 */
-	public LinkedList<String> getAvailPIN() {
-		return availablePIN;
-	}
-
-	public LinkedList<String> getAvailBar() {
-		return availableBar;
-	}
-
-	public String addMember(String[] info) {
-		String PIN = availablePIN.pop(); // Get new PIN
-		Member m = new Member(info[0], info[1], info[2], info[3], PIN); // Create
-																		// member
-		if (members.put(PIN, m) != null) { // Check if full
-			saveMembers();
-			saveAvailablePIN();
-			saveStats();
-			return PIN;
-		}
-		return null;
-	}
-
-	public Statistics getStats() {
-		return stats;
-	}
-
-	public LimitedHashMap<String, Member> getMembers() {
-		return members;
-	}
-
-	public LimitedHashMap<String, Bicycle> getBicycles() {
-		return bicycles;
-	}
-
-	/**
-	 * End test methods
-	 */
 }
