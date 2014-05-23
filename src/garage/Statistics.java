@@ -120,7 +120,7 @@ public class Statistics {
 		startIndex = (startIndex < 0) ? 0 : startIndex;
 		int endIndex = computeIndex(endDate);
 		endIndex = (endIndex < 0) ? 0 : endIndex;
-		endIndex= endIndex==0?0:endIndex+1;
+//		endIndex= endIndex==0?0:endIndex+1;
 		int size = endIndex - startIndex + 1;
 		String[][] matrix = new String[size][5];
 		Calendar cal = Calendar.getInstance();

@@ -474,7 +474,7 @@ public class GUI {
 		panel.add(textField, "cell 3 3 3 1,growx");
 		textField.setColumns(10);
 		
-		JLabel lblTo = new JLabel("To");
+		JLabel lblTo = new JLabel("To (excl.)");
 		panel.add(lblTo, "cell 2 4,alignx trailing");
 		
 		JButton btnStats = new JButton("Fetch Data");
