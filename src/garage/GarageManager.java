@@ -41,7 +41,7 @@ public class GarageManager implements BicycleGarageManager {
 
 	public void entryBarcode(String bicycleID) {
 		// Check if garage is full.
-		if (!(db.getMemberSize()>=db.getMaxMemberSize())) {
+		if (db.getBicyclesInGarage() < db.getMaxParkingSlots()) {
 			Bicycle bicycle = db.getBicycle(bicycleID);
 			// Check if barcode is valid.
 			if (bicycle != null) {
@@ -51,11 +51,10 @@ public class GarageManager implements BicycleGarageManager {
 					terminal.lightLED(PinCodeTerminal.GREEN_LED, 10);
 					entryLock.open(10);
 					ignoreInputTime.setTime(new Date().getTime() + 10000);
-					db.parkBicycle(bicycle);
-					db.checkInMember(m);
+					db.parkBicycle(bicycleID);
+					db.checkInMember(bicycle.getOwnerPIN());
 				} else {
 					terminal.lightLED(PinCodeTerminal.RED_LED, 2);
-					
 				}
 			} else {
 				terminal.lightLED(PinCodeTerminal.RED_LED, 1);
@@ -74,7 +73,7 @@ public class GarageManager implements BicycleGarageManager {
 			// Check if owner is checked in .
 			if (member.isCheckedIn()) {
 				exitLock.open(10);
-				db.unParkBicycle(bicycle);
+				db.unParkBicycle(bicycleID);
 				member.checkOut();
 			}
 		}
@@ -106,7 +105,7 @@ public class GarageManager implements BicycleGarageManager {
 							entryLock.open(10);
 							ignoreInputTime
 									.setTime(new Date().getTime() + 10000);
-							db.checkInMember(member);
+							db.checkInMember(member.getPIN());
 							
 							pinBuilder.setLength(0);
 						} else {

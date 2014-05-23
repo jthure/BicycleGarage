@@ -39,6 +39,12 @@ public class Database implements DatabaseInterface {
 		creationDate = new Date();
 		stats = new Statistics(this);
 		maxParkingSlots = maxBikes;
+		saveAvailableBar();
+		saveAvailablePIN();
+		saveBicycles();
+		saveMembers();
+		saveStats();
+		saveMaxParkingSlots();
 	}
 
 	public Database(String members, String bicycles, String availablePIN,
@@ -96,6 +102,7 @@ public class Database implements DatabaseInterface {
 				p.printBarcode(barcode);
 				stats.bicycleChange();
 				saveBicycles();
+				saveMembers();
 				saveAvailableBar();
 				saveStats();
 				return true;
@@ -125,10 +132,10 @@ public class Database implements DatabaseInterface {
 			availablePIN.add(oldPIN); // Put back old PIN
 			saveMembers();
 			saveAvailablePIN();
+			saveBicycles();
 			return newPIN;
 		}
 		return null;
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -198,27 +205,27 @@ public class Database implements DatabaseInterface {
 		}
 	}
 
-	public void saveMembers() {
+	private void saveMembers() {
 		writeToFile(this.members, "members.bg");
 	}
 
-	public void saveBicycles() {
+	private void saveBicycles() {
 		writeToFile(this.bicycles, "bicycles.bg");
 	}
 
-	public void saveAvailableBar() {
+	private void saveAvailableBar() {
 		writeToFile(this.availableBar, "availableBar.bg");
 	}
 
-	public void saveAvailablePIN() {
+	private void saveAvailablePIN() {
 		writeToFile(this.availablePIN, "availablePIN.bg");
 	}
 
-	public void saveStats() {
+	private void saveStats() {
 		writeToFile(this.dayEvents, "stats.bg");
 	}
 	
-	public void saveMaxParkingSlots() {
+	private void saveMaxParkingSlots() {
 		writeToFile(this.maxParkingSlots, "slots.bg");
 	}
 
@@ -259,6 +266,7 @@ public class Database implements DatabaseInterface {
 				availableBar.add(barcode);
 				stats.bicycleChange();
 				saveBicycles();
+				saveMembers();
 				saveAvailableBar();
 				saveStats();
 				return true;
@@ -270,6 +278,7 @@ public class Database implements DatabaseInterface {
 	public boolean setMaxParkingSlots(int newMax) {
 		if (newMax >= getBicyclesInGarage()) {
 			maxParkingSlots = newMax;
+			saveMaxParkingSlots();
 			return true;
 		}
 		return false;
@@ -277,6 +286,7 @@ public class Database implements DatabaseInterface {
 
 	public void setMaxBicycleCapacity(int limit) {
 		bicycles.changeMaxCapacity(limit);
+		saveBicycles();
 	}
 
 	public int getMemberSize() {
@@ -306,6 +316,7 @@ public class Database implements DatabaseInterface {
 	public boolean suspendMember(String PIN, Date until) {
 		if (members.containsKey(PIN)) {
 			members.get(PIN).suspend(until);
+			saveMembers();
 			return true;
 		}
 		return false;
@@ -351,24 +362,33 @@ public class Database implements DatabaseInterface {
 	public boolean unsuspendMember(String PIN) {
 		if (members.containsKey(PIN)) {
 			members.get(PIN).unsuspend();
+			saveMembers();
 			return true;
 		}
 		return false;
 	}
 
-	public void checkInMember(Member m) {
-		m.checkIn();
+	public void checkInMember(String PIN) {
+		members.get(PIN).checkIn();
 		stats.userCheckInChange();
+		saveMembers();
+		saveStats();
 	}
 	
-	public void parkBicycle(Bicycle b){
-		b.park();
+	public void parkBicycle(String barCode){
+		bicycles.get(barCode).park();
 		stats.bicyclesInGarageChange();
+		saveBicycles();
+		saveMembers();
 	}
 
-	public void unParkBicycle(Bicycle b) {
-		b.unPark();
+	public void unParkBicycle(String barCode) {
+		bicycles.get(barCode).unPark();
 		stats.bicyclesInGarageChange();
+		saveBicycles();
+		if (members.get(bicycles.get(barCode).getOwnerPIN()).isCheckedIn()) {
+			saveMembers();
+		}
 	}
 
 	public Statistics getStats() {
@@ -387,7 +407,7 @@ public class Database implements DatabaseInterface {
 		return maxParkingSlots;
 	}
 	
-	public boolean checkForDuplicate(String PID) {
+	public boolean checkForDuplicateMember(String PID) {
 		for (Entry<String, Member> e : members.entrySet()) {
 			if (e.getValue().getPIDNbr().equals(PID)) {
 				return true;

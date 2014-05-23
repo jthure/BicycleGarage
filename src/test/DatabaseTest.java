@@ -90,7 +90,7 @@ public class DatabaseTest {
 
 		db = null;
 		db = new Database("members.bg", "bicycles.bg", "availablePIN.bg",
-				"availableBar.bg", "stats.bg");
+				"availableBar.bg", "stats.bg", "slots.bg");
 		assertEquals(2, db.getMemberSize());
 		assertEquals(2, db.getBicycleSize());
 
@@ -99,7 +99,7 @@ public class DatabaseTest {
 		// assertEquals(1, db.getBicycleSize());
 		db = null;
 		db = new Database("members.bg", "bicycles.bg", "availablePIN.bg",
-				"availableBar.bg", "stats.bg");
+				"availableBar.bg", "stats.bg", "slots.bg");
 		assertEquals(1, db.getMemberSize());
 		assertEquals(1, db.getBicycleSize());
 	}
