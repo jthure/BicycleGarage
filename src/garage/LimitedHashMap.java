@@ -26,6 +26,7 @@ public class LimitedHashMap<K, V> extends HashMap<K, V> {
 		super(m);
 	}
 
+
 	@Override
 	public V put(K key, V value) {
 		// if (size() >= max && !containsKey(key)) { Bort med negeringen va?
@@ -40,6 +41,10 @@ public class LimitedHashMap<K, V> extends HashMap<K, V> {
 		}
 	}
 
+	/** Changes the max capacity of this LimitedHashMap to the specified value if it's size less than the this value.
+	 * @param newMax Value to be set as new max.
+	 * @return True if the new max capcity was set, false otherwise.
+	 */
 	public boolean changeMaxCapacity(int newMax) {
 		if (newMax >= size()) {
 			max = newMax;
@@ -48,6 +53,9 @@ public class LimitedHashMap<K, V> extends HashMap<K, V> {
 		return false;
 	}
 
+	/**Returns this LimitedHashMap's max Capacity.
+	 * @return
+	 */
 	public int getMaxCapacity() {
 		return max;
 	}

@@ -21,7 +21,8 @@ public class BicycleGarage {
         
         new GUI(db, printer);
     }
-    public static void main(String[] args) {
+   
+	public static void main(String[] args) {
         new BicycleGarage();
     }
 }

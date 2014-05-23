@@ -10,6 +10,9 @@ public class Statistics {
 	private static final long day = 86400000;
 	Database db;
 
+	/**Creates a new Statistics object which will use the specified databse.
+	 * @param db Database that should be used.
+	 */
 	public Statistics(Database db) {
 		this.db = db;
 	}
@@ -44,6 +47,9 @@ public class Statistics {
 		return newDayEvent;
 	}
 
+	/**
+	 * Updates the number of registered members for the current day.
+	 */
 	public void memberChange() {
 		// checkLength();
 		int index = computeIndex(new Date());
@@ -55,21 +61,10 @@ public class Statistics {
 		}
 	}
 
-	// Test start
-//	public void memberChange(int days) {
-//		checkLength();
-//		int index = computeIndex(new Date(new Date().getTime()
-//				+ (long) 86400000 * (long) days));
-//		DayEvent dayEvent = db.getDayEvents().get(index);
-//		if (dayEvent != null) {
-//			dayEvent.setMembers(db.getMemberSize());
-//		} else {
-//			newDayEvent();
-//		}
-//	}
 
-	// Test end
-
+	/**
+	 * Updates the number of registered bicyles for the current day.
+	 */
 	public void bicycleChange() {
 		checkLength();
 		int index = computeIndex(new Date());
@@ -81,6 +76,9 @@ public class Statistics {
 		}
 	}
 
+	/**
+	 * Updates the number of bicycles parked in the garage for the current day.
+	 */
 	public void bicyclesInGarageChange() {
 		checkLength();
 		int index = computeIndex(new Date());
@@ -93,6 +91,9 @@ public class Statistics {
 		}
 	}
 
+	/**
+	 * Increments the number of members that have been checked in for the current day.
+	 */
 	public void userCheckInChange() {
 		checkLength();
 		int index = computeIndex(new Date());
@@ -105,6 +106,14 @@ public class Statistics {
 		}
 	}
 
+	/**Returns a matrix consisting of: 
+	 * By column: the date, number of registered members, number of registered bicycles, number of bicycles parked in the garage and the number of members that have checked.
+	 * By row: The column values by date, ranging from the specified dates.
+	 * 
+	 * @param startDate Start date.
+	 * @param endDate End date.
+	 * @return
+	 */
 	public String[][] getInfo(Date startDate, Date endDate) {
 		checkLength();
 		int startIndex = computeIndex(startDate);

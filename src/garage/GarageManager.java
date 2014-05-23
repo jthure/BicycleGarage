@@ -20,6 +20,9 @@ public class GarageManager implements BicycleGarageManager {
 	private ElectronicLock entryLock, exitLock;
 	private PinCodeTerminal terminal;
 
+	/**Creates a new GarageManger object which will use the specified database.
+	 * @param db The database to be used.
+	 */
 	public GarageManager(Database db) {
 		this.db = db;
 		pinBuilder = new StringBuilder();
@@ -29,6 +32,9 @@ public class GarageManager implements BicycleGarageManager {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see interfaces.BicycleGarageManager#registerHardwareDrivers(interfaces.BarcodePrinter, interfaces.ElectronicLock, interfaces.ElectronicLock, interfaces.PinCodeTerminal)
+	 */
 	public void registerHardwareDrivers(BarcodePrinter printer,
 			ElectronicLock entryLock, ElectronicLock exitLock,
 			PinCodeTerminal terminal) {
@@ -39,6 +45,9 @@ public class GarageManager implements BicycleGarageManager {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see interfaces.BicycleGarageManager#entryBarcode(java.lang.String)
+	 */
 	public void entryBarcode(String bicycleID) {
 		// Check if garage is full.
 		if (db.getBicyclesInGarage() < db.getMaxParkingSlots()) {
@@ -65,6 +74,9 @@ public class GarageManager implements BicycleGarageManager {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see interfaces.BicycleGarageManager#exitBarcode(java.lang.String)
+	 */
 	public void exitBarcode(String bicycleID) {
 		Bicycle bicycle = db.getBicycle(bicycleID);
 		// Check if barcode is valid.
@@ -80,6 +92,9 @@ public class GarageManager implements BicycleGarageManager {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see interfaces.BicycleGarageManager#entryCharacter(char)
+	 */
 	public void entryCharacter(char c) {
 		// Check if terminal ignores input (i.e. the door is open or 3 invalid
 		// pincodes has been entered).
