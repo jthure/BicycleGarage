@@ -597,6 +597,10 @@ public class GUI {
 			textField_Barcode.setText(b.getBarcode());
 			textField_Owner.setText(b.getOwnerPIN());
 			chckbxParked.setSelected(b.isParked());
+		}else{
+			textField_Barcode.setText("");
+			textField_Owner.setText("");
+			chckbxParked.setSelected(false);
 		}
 	}
 	

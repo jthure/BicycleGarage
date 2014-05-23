@@ -18,7 +18,8 @@ import testdrivers.PinCodeTerminalTestDriver;
 public class Main {
 	private final String[] FILE_NAMES = { "members.bg", "bicycles.bg",
 			"availablePIN.bg", "availableBar.bg", "stats.bg", "slots.bg" };
-
+	private final File dbDirectory = new File("db");
+	
 	private Database db;
 	private GarageManager manager;
 	private ElectronicLock entryLock;
@@ -36,6 +37,9 @@ public class Main {
 	 * @param maxMembers Max number of members that the database will hold.
 	 */
 	public Main(int maxBikes, int maxMembers) {
+		if(!dbDirectory.exists()){
+			dbDirectory.mkdir();
+		}
 		File m = new File("db\\" + FILE_NAMES[0]);
 		File b = new File("db\\" + FILE_NAMES[1]);
 		File p = new File("db\\" + FILE_NAMES[2]);
