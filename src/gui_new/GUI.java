@@ -267,7 +267,7 @@ public class GUI {
 		JButton btnNewBarcode = new JButton("Print New Bar Code");
 		btnNewBarcode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				printer.printBarcode(textField_Barcode.getText());
+				printNewBarcode();
 			}
 		});
 		internalFrame_Bikes.getContentPane().add(btnNewBarcode, "cell 0 4 4 1,growx,aligny center");
@@ -494,6 +494,22 @@ public class GUI {
 		panel.add(btnStats, "cell 2 5 4 1,growx");
 	}
 
+	private void printNewBarcode() {
+		String barcode = textField_Barcode.getText();
+		if (db.removeBicycle(barcode)) {
+			db.addBicycle(db.getMember(textField_Owner.getText()), printer);
+			JOptionPane.showMessageDialog(internalFrame_Members,
+					"A new barcode has been generated.",
+					"New barcode",
+					JOptionPane.PLAIN_MESSAGE);
+		} else {
+			JOptionPane.showMessageDialog(internalFrame_Members,
+					"Bicycle does not exist or is parked in the garage.",
+					"Error",
+					JOptionPane.PLAIN_MESSAGE);
+		}
+	}
+
 	private void setMaxCap() {
 		String max = textField_maxCap.getText();
 		if (max != null) {
@@ -557,15 +573,21 @@ public class GUI {
 				"Remove member", 
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			Member m = db.getMember(textField_PIN.getText());
-			db.removeMember(m.getPIN());
-			textField_Name.setText("");
-			textField_PID.setText("");
-			textField_PIN.setText("");
-			textField_Tel.setText("");
-			comboBox_Bikes.removeAllItems();
-			chckbxSuspended.setSelected(false);
-			chckbxCheckedIn.setSelected(false);
-			memberListModel.clear();
+			if (db.removeMember(m.getPIN())) {
+				textField_Name.setText("");
+				textField_PID.setText("");
+				textField_PIN.setText("");
+				textField_Tel.setText("");
+				comboBox_Bikes.removeAllItems();
+				chckbxSuspended.setSelected(false);
+				chckbxCheckedIn.setSelected(false);
+				memberListModel.clear();
+			} else {
+				JOptionPane.showMessageDialog(internalFrame_AddMember,
+						"Member does not exist or has bicycles parked in the garage.",
+						"Error",
+						JOptionPane.PLAIN_MESSAGE);
+			}
 		}
 	}
 
