@@ -72,7 +72,7 @@ public class Statistics {
 			userCheckInChange();
 		}
 	}
-	public int[][] getInfo(Date startDate, Date endDate){
+	public int[][] getData(Date startDate, Date endDate){
 		int startIndex = computeIndex(startDate);
 		int endIndex = computeIndex(endDate);
 		int size = endIndex-startIndex+1;
