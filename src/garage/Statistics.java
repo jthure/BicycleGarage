@@ -23,6 +23,7 @@ public class Statistics {
 		}
 		long ms = date.getTime() - db.creationDate().getTime();
 		int index = (int) (ms / day);
+
 		return index;
 	}
 
@@ -30,10 +31,9 @@ public class Statistics {
 		int index = computeIndex(new Date());
 		ArrayList<DayEvent> des = db.getDayEvents();
 		while (index >= des.size()) {
-			DayEvent de = des.get(des.size() - 1);
-			de.setDay(new Date(de.getDay().getTime() + day));
-			de.setMembersCheckedIn(0);
-			des.add(de);
+			DayEvent lastDay = des.get(des.size() - 1);
+			DayEvent nextDay = new DayEvent(lastDay,day);
+			des.add(nextDay);
 		}
 	}
 
@@ -51,7 +51,7 @@ public class Statistics {
 	 * Updates the number of registered members for the current day.
 	 */
 	public void memberChange() {
-		// checkLength();
+		checkLength();
 		int index = computeIndex(new Date());
 		DayEvent dayEvent = db.getDayEvents().get(index);
 		if (dayEvent != null) {
@@ -112,7 +112,7 @@ public class Statistics {
 	 * 
 	 * @param startDate Start date.
 	 * @param endDate End date.
-	 * @return
+	 * @return Matric containing the DayEvents infomation during the specified date interval.
 	 */
 	public String[][] getInfo(Date startDate, Date endDate) {
 		checkLength();
@@ -120,6 +120,7 @@ public class Statistics {
 		startIndex = (startIndex < 0) ? 0 : startIndex;
 		int endIndex = computeIndex(endDate);
 		endIndex = (endIndex < 0) ? 0 : endIndex;
+		endIndex= endIndex==0?0:endIndex+1;
 		int size = endIndex - startIndex + 1;
 		String[][] matrix = new String[size][5];
 		Calendar cal = Calendar.getInstance();

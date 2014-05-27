@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class DayEvent implements Serializable {
+	
 	Date day;
 	int members, bicycles, membersCheckedIn, bicyclesInGarage;
 
@@ -16,6 +17,13 @@ public class DayEvent implements Serializable {
 		bicycles = 0;
 		membersCheckedIn = 0;
 		bicyclesInGarage = 0;
+	}
+	public DayEvent(DayEvent de, long addToDay){
+		setDay(new Date(de.getDay().getTime()+addToDay));
+		this.members= de.getMembers();
+		this.bicycles=de.getBicycles();
+		this.membersCheckedIn=0;
+		this.bicyclesInGarage=de.getBicyclesInGarage();
 	}
 	/**
 	 * Creates a new DayEvent object with the current date and all other values set to 0.

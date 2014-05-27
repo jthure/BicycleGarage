@@ -628,8 +628,9 @@ public class GUI {
 	}
 
 	private void getStats(String from, String to) throws ParseException {
-		for (int r = 0; r < statsTableModel.getRowCount(); r++) {
-			statsTableModel.removeRow(r);
+		int rowCount = statsTableModel.getRowCount();
+		for (int r = 0; r < rowCount; r++) {
+			statsTableModel.removeRow(0);
 		}
 		Date fDate = parseToStupidArbitraryDateFormat(from);
 		Date tDate = parseToStupidArbitraryDateFormat(to);
